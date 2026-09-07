@@ -1,0 +1,35 @@
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Moodle data
+moodledata/
+moodle_moodledata/
+moodle-data/
+
+# Database data
+mariadb_data/
+
+# Docker volumes
+*.db
+
+# Backup folders
+theme/*-backup/
+
+# Scratch / notes with pasted content
+scratch/
+notes/
+*.local.txt
+
+# Raw brand source assets (not the theme's actual logo files, which live
+# in theme/ospira/pix/brand/)
+ospira logo/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/

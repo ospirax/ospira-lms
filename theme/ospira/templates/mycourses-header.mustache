@@ -1,0 +1,68 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+
+    @template theme_ospira/mycourses-header
+
+    Custom Ospira-branded header prepended above Moodle's real
+    block_myoverview ("Course overview") block on the My Courses page - see
+    classes/output/core_renderer.php::custom_block_region(). Only this
+    header is custom; everything below it is Moodle's own untouched block
+    (search, sort, filter, favouriting all keep working as-is).
+
+    Context variables required for this template - see
+    theme_ospira_get_mycourses_context() in lib.php.
+
+    Example context (json):
+    {
+        "firstname": "Nandita",
+        "activecoursecount": 4,
+        "completedcount": 1,
+        "pendingtaskcount": 2,
+        "averageprogress": 42
+    }
+}}
+<div class="ospira-mycourses-header">
+    <span class="ospira-mycourses-header__eyebrow">My Learning</span>
+    <h1 class="ospira-mycourses-header__headline">My Courses</h1>
+    <p class="ospira-mycourses-header__subtext">
+        Continue your enrolled courses, check progress, and jump back into the next lesson.
+    </p>
+
+    <section class="ospira-dashboard-tiles ospira-mycourses-header__tiles">
+        <div class="ospira-dashboard-tile">
+            <span class="ospira-dashboard-tile__icon ospira-dashboard-tile__icon--blue"><i class="fas fa-book" aria-hidden="true"></i></span>
+            <span class="ospira-dashboard-tile__value">{{activecoursecount}}</span>
+            <span class="ospira-dashboard-tile__label">Active Courses</span>
+        </div>
+        <div class="ospira-dashboard-tile">
+            <span class="ospira-dashboard-tile__icon ospira-dashboard-tile__icon--green"><i class="fas fa-check-circle" aria-hidden="true"></i></span>
+            <span class="ospira-dashboard-tile__value">{{completedcount}}</span>
+            <span class="ospira-dashboard-tile__label">Completed</span>
+        </div>
+        <div class="ospira-dashboard-tile">
+            <span class="ospira-dashboard-tile__icon ospira-dashboard-tile__icon--orange"><i class="fas fa-clock" aria-hidden="true"></i></span>
+            <span class="ospira-dashboard-tile__value">{{pendingtaskcount}}</span>
+            <span class="ospira-dashboard-tile__label">Pending Tasks</span>
+        </div>
+        <div class="ospira-dashboard-tile">
+            <span class="ospira-dashboard-tile__icon ospira-dashboard-tile__icon--pink"><i class="fas fa-chart-line" aria-hidden="true"></i></span>
+            <span class="ospira-dashboard-tile__value">{{averageprogress}}%</span>
+            <span class="ospira-dashboard-tile__label">Average Progress</span>
+        </div>
+    </section>
+</div>

@@ -1,0 +1,156 @@
+# Production stack for learning.ospirax.com
+#
+# Two modes, because the target server also hosts other Ospira apps:
+#
+#   A. Something already serves 80/443 (nginx/Apache) - the normal case.
+#      Moodle listens on 127.0.0.1:8080 and that proxy forwards to it.
+#
+#        docker compose -f docker-compose.prod.yml up -d
+#
+#   B. Ports 80/443 are free and this stack owns the edge.
+#
+#        docker compose -f docker-compose.prod.yml --profile edge up -d
+#
+# Run mode A unless you have confirmed nothing else is bound to 80/443.
+# Starting the edge profile on a server that already has a web server will
+# collide with it and can take the existing sites down. DEPLOY.md has the
+# commands to check.
+#
+# Differences from docker-compose.yml (local dev):
+#   - images pinned by digest, not floating tags
+#   - Moodle bound to loopback only; TLS terminated by a reverse proxy
+#   - MOODLE_HOST / reverse-proxy / cron settings that a real domain needs
+#   - restart policies so the site survives a reboot
+#   - theme/boost is NOT mounted (see the moodle volumes block)
+name: ospira-lms
+
+services:
+  mariadb:
+    # bitnamilegacy/mariadb:11.4 as of 2026-09-01. Pinned by digest because
+    # the legacy catalogue is frozen - a floating tag buys nothing here and
+    # costs reproducibility.
+    image: bitnamilegacy/mariadb@sha256:90dc6acb7b2e45135609711f14b3306f6a20f38978680cafb35d2e239214341d
+    restart: unless-stopped
+    environment:
+      # ":?" makes Compose abort with a named error if the variable is
+      # missing, instead of silently substituting an empty string and
+      # leaving the container to fail on startup.
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD:?not set in .env}
+      - MARIADB_USER=${MARIADB_USER:?not set in .env}
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD:?not set in .env}
+      - MARIADB_DATABASE=${MARIADB_DATABASE:?not set in .env}
+    volumes:
+      - mariadb_data:/bitnami/mariadb
+    healthcheck:
+      # The image ships its own check, which sources the MariaDB env itself
+      # and so needs no credentials repeated here.
+      test: ["CMD", "/opt/bitnami/scripts/mariadb/healthcheck.sh"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 90s
+    networks:
+      - backend
+
+  moodle:
+    # bitnamilegacy/moodle:latest as of 2026-09-01 == Moodle 5.0.1.
+    image: bitnamilegacy/moodle@sha256:a7bd6bf34b736dad22ee22168d4bfd830b7bedf9e34b89732d92d437317cb1d0
+    restart: unless-stopped
+    depends_on:
+      mariadb:
+        # service_started (the Compose default) lets Moodle race ahead of a
+        # database that is still initialising and fail its install.
+        condition: service_healthy
+    environment:
+      - MOODLE_DATABASE_HOST=${MOODLE_DATABASE_HOST:-mariadb}
+      - MOODLE_DATABASE_USER=${MOODLE_DATABASE_USER:?not set in .env}
+      - MOODLE_DATABASE_PASSWORD=${MOODLE_DATABASE_PASSWORD:?not set in .env}
+      - MOODLE_DATABASE_NAME=${MOODLE_DATABASE_NAME:?not set in .env}
+      - MOODLE_USERNAME=${MOODLE_USERNAME:?not set in .env}
+      - MOODLE_PASSWORD=${MOODLE_PASSWORD:?not set in .env}
+      - MOODLE_EMAIL=${MOODLE_EMAIL:?not set in .env}
+      - MOODLE_SITE_NAME=${MOODLE_SITE_NAME:-Ospira LMS}
+
+      # Public hostname. Moodle bakes this into $CFG->wwwroot during the
+      # first install and stores absolute URLs in the database against it,
+      # so changing it afterwards means a search/replace across the DB.
+      # Get it right before the first `up`.
+      - MOODLE_HOST=${MOODLE_HOST:?not set in .env}
+
+      # Caddy terminates TLS and forwards plain HTTP on the internal
+      # network. Without both of these Moodle builds http:// links behind
+      # the proxy and browsers land in a redirect loop.
+      - MOODLE_REVERSEPROXY=yes
+      - MOODLE_SSLPROXY=yes
+
+      # Moodle needs cron for scheduled tasks. Without it: no outbound
+      # mail, and activity completion never recomputes - which is what the
+      # Ospira dashboard's progress and pending-task tiles read from.
+      - MOODLE_CRON_MINUTES=${MOODLE_CRON_MINUTES:-1}
+
+      # Optional. Left blank, Moodle falls back to PHP mail(), which on a
+      # fresh VPS almost always lands in spam - so password resets and
+      # signup confirmations for parents will not arrive. Fill these in.
+      - MOODLE_SMTP_HOST=${MOODLE_SMTP_HOST:-}
+      - MOODLE_SMTP_PORT_NUMBER=${MOODLE_SMTP_PORT_NUMBER:-}
+      - MOODLE_SMTP_USER=${MOODLE_SMTP_USER:-}
+      - MOODLE_SMTP_PASSWORD=${MOODLE_SMTP_PASSWORD:-}
+      - MOODLE_SMTP_PROTOCOL=${MOODLE_SMTP_PROTOCOL:-}
+    volumes:
+      - moodle_data:/bitnami/moodle
+      - moodle_moodledata:/bitnami/moodledata
+      # Read-only: Moodle writes compiled theme CSS into moodledata, never
+      # back into the theme directory.
+      - ./theme/ospira:/bitnami/moodle/theme/ospira:ro
+      # theme/boost is deliberately NOT mounted. The copy in this repo is
+      # unmodified upstream, and mounting it over the image's own Boost
+      # would pin the parent theme to a stale snapshot across upgrades.
+    networks:
+      - backend
+      - frontend
+    ports:
+      # Bound to loopback by default, NOT 0.0.0.0 - Moodle is not reachable
+      # from the internet directly, only through whichever reverse proxy
+      # fronts it. Leave the address as 127.0.0.1.
+      #
+      # Host port defaults to 8081 because the previous Moodle LMS occupies
+      # 8080 on this server and has to keep running.
+      - "${MOODLE_BIND_ADDR:-127.0.0.1}:${MOODLE_BIND_PORT:-8081}:8080"
+
+  caddy:
+    # Optional edge. Only starts with `--profile edge`, because on a server
+    # that already runs a web server on 80/443 this would collide with it
+    # and take the existing sites down. If something already owns those
+    # ports, leave this off and point that proxy at MOODLE_BIND_PORT
+    # instead - see DEPLOY.md.
+    profiles: ["edge"]
+    # Floating v2 tag on purpose - this is the TLS-terminating edge, and
+    # picking up patch releases matters more here than pinning does.
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - moodle
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"   # HTTP/3
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data       # holds the Let's Encrypt certificates
+      - caddy_config:/config
+    networks:
+      - frontend
+
+networks:
+  # mariadb sits on backend only, so it has no route to the internet and
+  # nothing outside this stack can reach it.
+  backend:
+    internal: true
+  frontend:
+
+volumes:
+  mariadb_data:
+  moodle_data:
+  moodle_moodledata:
+  caddy_data:
+  caddy_config:

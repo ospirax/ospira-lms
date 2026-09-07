@@ -1,0 +1,193 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+
+    @template theme_ospira/dashboard
+
+    Ospira parent-facing Dashboard: replaces Moodle's default My Moodle
+    blocks (Timeline, Calendar, Course overview) - see
+    classes/output/core_renderer.php::custom_block_region(). Renders
+    inside real Boost page chrome, unlike the standalone homepage.mustache.
+
+    Context - see theme_ospira_get_dashboard_context() in lib.php.
+
+    Example context (json):
+    {
+        "firstname": "Nandita",
+        "activecoursecount": 4,
+        "pendingtaskcount": 2,
+        "averageprogress": 42,
+        "courseprogress": [
+            {"id": 4, "fullname": "Ospira Early Years Parenting – Ages 1–5", "url": "http://localhost:8080/course/view.php?id=4", "hasprogress": true, "progress": 42}
+        ],
+        "hascourseprogress": true,
+        "recentlyaccessed": [
+            {"id": 4, "fullname": "Ospira Early Years Parenting – Ages 1–5", "url": "http://localhost:8080/course/view.php?id=4", "imageurl": "http://localhost:8080/pluginfile.php/22/course/overviewfiles/cover.png"}
+        ],
+        "hasrecentlyaccessed": true,
+        "pendingtasks": [
+            {"name": "Assignment 1", "coursename": "Ospira Early Years Parenting – Ages 1–5", "hassectionname": true, "sectionname": "Module 1: Foundations of Positive Parenting", "hasduedate": true, "duedate": "2 Sep 2026", "url": "http://localhost:8080/mod/assign/view.php?id=12"},
+            {"name": "Assessment", "coursename": "Ospira Growing Years Parenting – Ages 6–10", "hassectionname": false, "sectionname": "", "hasduedate": false, "duedate": "", "url": "http://localhost:8080/mod/quiz/view.php?id=28"}
+        ],
+        "haspendingtasks": true,
+        "courseindexurl": "http://localhost:8080/course/index.php",
+        "homeurl": "http://localhost:8080",
+        "herophotourl": "http://localhost:8080/theme/image.php/ospira/theme_ospira/1/dashboard/family"
+    }
+}}
+<div class="ospira-dashboard">
+
+    <section class="ospira-dashboard-hero">
+        <div class="ospira-dashboard-hero__inner">
+            <div class="ospira-dashboard-hero__content">
+                <span class="ospira-dashboard-hero__eyebrow">👋 Welcome back</span>
+                <h1 class="ospira-dashboard-hero__headline">Hi, {{firstname}}!</h1>
+                <p class="ospira-dashboard-hero__subtext">
+                    Here's how your learning is going — courses and progress, all in one place.
+                </p>
+                <div class="ospira-dashboard-hero__actions">
+                    <a href="{{{courseindexurl}}}" class="ospira-btn ospira-btn--primary">Browse Courses</a>
+                    <a href="{{{homeurl}}}" class="ospira-btn ospira-btn--secondary">Back to Home</a>
+                </div>
+            </div>
+
+            <div class="ospira-dashboard-hero__visual">
+                <div class="ospira-dashboard-hero__photo-wrap">
+                    <div class="ospira-dashboard-hero__photo-stage">
+                        <div class="ospira-dashboard-hero__blob"></div>
+                        <div class="ospira-dashboard-hero__dots"></div>
+                        <img src="{{{herophotourl}}}" class="ospira-dashboard-hero__photo" alt="">
+                    </div>
+
+                    <div class="ospira-dashboard-stat ospira-dashboard-stat--one">
+                        <span class="ospira-dashboard-stat__icon"><i class="fas fa-graduation-cap" aria-hidden="true"></i></span>
+                        <span>
+                            <span class="ospira-dashboard-stat__value">{{activecoursecount}}</span>
+                            <span class="ospira-dashboard-stat__label">Active Courses</span>
+                        </span>
+                    </div>
+
+                    <div class="ospira-dashboard-stat ospira-dashboard-stat--two">
+                        <span class="ospira-dashboard-stat__icon"><i class="fas fa-chart-line" aria-hidden="true"></i></span>
+                        <span>
+                            <span class="ospira-dashboard-stat__value">{{averageprogress}}%</span>
+                            <span class="ospira-dashboard-stat__label">Avg. Progress</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="ospira-dashboard-body">
+
+        <section class="ospira-dashboard-tiles">
+            <div class="ospira-dashboard-tile">
+                <span class="ospira-dashboard-tile__icon ospira-dashboard-tile__icon--blue"><i class="fas fa-book" aria-hidden="true"></i></span>
+                <span class="ospira-dashboard-tile__value">{{activecoursecount}}</span>
+                <span class="ospira-dashboard-tile__label">Active Courses</span>
+            </div>
+            <div class="ospira-dashboard-tile">
+                <span class="ospira-dashboard-tile__icon ospira-dashboard-tile__icon--pink"><i class="fas fa-file-alt" aria-hidden="true"></i></span>
+                <span class="ospira-dashboard-tile__value">{{pendingtaskcount}}</span>
+                <span class="ospira-dashboard-tile__label">Pending Tasks</span>
+            </div>
+            <div class="ospira-dashboard-tile">
+                <span class="ospira-dashboard-tile__icon ospira-dashboard-tile__icon--green"><i class="fas fa-chart-line" aria-hidden="true"></i></span>
+                <span class="ospira-dashboard-tile__value">{{averageprogress}}%</span>
+                <span class="ospira-dashboard-tile__label">Avg. Course Progress</span>
+            </div>
+        </section>
+
+        <section class="ospira-dashboard-analytics">
+            <div class="ospira-dashboard-panel ospira-dashboard-panel--progress">
+                <h2>Course Progress</h2>
+                <p class="ospira-dashboard-panel__intro">Track how you're progressing across every course</p>
+                {{#hascourseprogress}}
+                <ul class="ospira-dashboard-progress-list">
+                    {{#courseprogress}}
+                    <li>
+                        <a href="{{{url}}}">{{fullname}}</a>
+                        {{#hasprogress}}
+                        <div class="ospira-dashboard-progress-bar"><span style="width: {{progress}}%;"></span></div>
+                        <span class="ospira-dashboard-progress-value">{{progress}}%</span>
+                        {{/hasprogress}}
+                        {{^hasprogress}}
+                        <span class="ospira-dashboard-progress-value ospira-dashboard-progress-value--muted">In progress</span>
+                        {{/hasprogress}}
+                    </li>
+                    {{/courseprogress}}
+                </ul>
+                {{/hascourseprogress}}
+                {{^hascourseprogress}}
+                <p class="ospira-dashboard-empty">No courses enrolled yet.</p>
+                {{/hascourseprogress}}
+            </div>
+
+            <div class="ospira-dashboard-panel ospira-dashboard-panel--ring">
+                <h2>Overall Progress</h2>
+                <p class="ospira-dashboard-panel__intro">Average completion across all active courses</p>
+                <div class="ospira-dashboard-ring" style="--ospira-progress: {{averageprogress}};">
+                    <span class="ospira-dashboard-ring__value">{{averageprogress}}%</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="ospira-dashboard-recent">
+            <h2>Recently Accessed Courses</h2>
+            {{#hasrecentlyaccessed}}
+            <div class="ospira-dashboard-recent__grid">
+                {{#recentlyaccessed}}
+                <a class="ospira-dashboard-course-card" href="{{{url}}}">
+                    {{! Escaped: this lands inside a CSS url() inside an HTML
+                        attribute, and the course image filename is
+                        teacher-supplied. }}
+                    <div class="ospira-dashboard-course-card__image" style="background-image: url('{{imageurl}}');"></div>
+                    <div class="ospira-dashboard-course-card__title">{{fullname}}</div>
+                </a>
+                {{/recentlyaccessed}}
+            </div>
+            {{/hasrecentlyaccessed}}
+            {{^hasrecentlyaccessed}}
+            <p class="ospira-dashboard-empty">No recently accessed courses yet.</p>
+            {{/hasrecentlyaccessed}}
+        </section>
+
+        {{#haspendingtasks}}
+        <section class="ospira-dashboard-assignments">
+            <h2>Pending Tasks</h2>
+            <ul class="ospira-dashboard-assignments-list">
+                {{#pendingtasks}}
+                <li>
+                    <span class="ospira-dashboard-assignments-main">
+                        <a href="{{{url}}}">{{name}}</a>
+                        {{! Activity names repeat across courses, and one course
+                            names every quiz "Assessment" - without this line the
+                            rows are indistinguishable. }}
+                        <span class="ospira-dashboard-assignments-context">{{coursename}}{{#hassectionname}} &middot; {{sectionname}}{{/hassectionname}}</span>
+                    </span>
+                    {{#hasduedate}}
+                    <span class="ospira-dashboard-assignments-date">{{duedate}}</span>
+                    {{/hasduedate}}
+                </li>
+                {{/pendingtasks}}
+            </ul>
+        </section>
+        {{/haspendingtasks}}
+
+    </div>
+</div>

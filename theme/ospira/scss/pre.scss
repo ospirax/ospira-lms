@@ -1,0 +1,38 @@
+// Bootstrap/Boost variable overrides. Must load before
+// theme/boost/scss/preset/default.scss (see lib.php) - Bootstrap's own
+// variables are `!default`, so this only works if it runs before
+// default.scss's `@import "bootstrap"`. Anything that needs to change how
+// Bootstrap/Moodle's classes compile belongs here, not in ospira.scss.
+
+$ospira-purple:      #783FAA;
+$ospira-yellow:       #FFD105;
+$ospira-blue:         #46CEF5;
+$ospira-pink:         #ED196A;
+$ospira-gray:         #EFEFEF;
+$ospira-indigo:       #4A73CE;
+$ospira-orange:       #F8992F;
+$ospira-green:        #63B858;
+$ospira-green-dark:   #47903D;
+
+$primary:       $ospira-purple;
+$secondary:     $ospira-gray;
+$success:       $ospira-green;
+$warning:       $ospira-orange;
+$info:          $ospira-blue;
+$danger:        $ospira-pink;
+$body-bg:       #FFFFFF;
+$link-color:    $ospira-purple;
+
+$font-family-sans-serif: "Poppins", -apple-system, BlinkMacSystemFont, sans-serif;
+
+// Pill-shaped buttons (brand kit's "BEGIN ASSESSMENTS" style).
+$btn-border-radius:    50rem;
+$btn-border-radius-lg: 50rem;
+$btn-border-radius-sm: 50rem;
+
+// Taller navbar (~85px, up from Boost's 60px default). Boost centers
+// navbar content via flex on a hard `height: $navbar-height + 1px`, not
+// padding, so this variable is what drives it - every other
+// $navbar-height-dependent calculation sitewide stays in sync
+// automatically. Must load before default.scss's `@import "bootstrap"`.
+$navbar-height: 85px;

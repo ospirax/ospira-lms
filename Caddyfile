@@ -1,0 +1,48 @@
+# Reverse proxy + automatic TLS for Ospira LMS.
+#
+# Caddy provisions and renews the Let's Encrypt certificate on its own; the
+# certificates live in the caddy_data volume, so don't delete that volume
+# casually or you will re-request certificates and can hit rate limits.
+#
+# Requirements before the first start:
+#   - learning.ospirax.com must already resolve to this server's public IP
+#   - ports 80 and 443 must be open (see DEPLOY.md)
+
+learning.ospirax.com {
+	encode zstd gzip
+
+	# Moodle listens on 8080 inside its container and publishes no host
+	# port, so this proxy is the only route in. Caddy sets X-Forwarded-Proto
+	# automatically, which is what MOODLE_SSLPROXY reads.
+	reverse_proxy moodle:8080
+
+	# Course backups and SCORM packages exceed Caddy's default limit.
+	# Keep this at or above Moodle's own maxbytes setting.
+	request_body {
+		max_size 200MB
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "same-origin"
+		-Server
+	}
+
+	# Deliberately no Content-Security-Policy: Moodle core and the Ospira
+	# dark-mode toggle both emit inline <script>, which a default CSP
+	# would block. Adding one means giving those a nonce first.
+
+	log {
+		output file /data/access.log {
+			roll_size 20MB
+			roll_keep 5
+		}
+	}
+}
+
+# Bare domain and www both redirect to the canonical host, so Moodle only
+# ever sees the hostname recorded in $CFG->wwwroot.
+www.learning.ospirax.com {
+	redir https://learning.ospirax.com{uri} permanent
+}

@@ -1,0 +1,1797 @@
+// $ospira-purple/yellow/blue/pink/gray/indigo/orange/green/green-dark come
+// from pre.scss (loaded first, compiled together into one stylesheet).
+$ospira-ink: #2B2438; // dark text on light backgrounds
+
+// Poppins everywhere - pre.scss already sets $font-family-sans-serif to
+// Poppins for Bootstrap; this just asserts it on headings too.
+body {
+    font-family: $font-family-sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: $font-family-sans-serif;
+    font-weight: 600;
+}
+
+// Site-wide background gradient
+html, body {
+    background: linear-gradient(135deg, #F2ECF7 0%, #ECFAFE 50%, #FFFAE6 100%) !important;
+    background-attachment: fixed !important;
+    // .ospira-footer's width: 100vw (below) is wider than the viewport
+    // when a scrollbar is present - this hides the resulting overflow.
+    overflow-x: hidden;
+}
+
+// ---- Moodle front page (#page-site-index) ------------------------------
+// The landing page hero. These rules style HTML that is currently pasted
+// into the front page summary field (Site administration > Front page),
+// NOT a template.
+//
+// That is a deployment hazard: the summary lives in the Moodle database,
+// so it does not travel with this repository. Pulling the theme onto a
+// server gives you these styles with no markup to style - which is exactly
+// why the front page came up unstyled on learning.ospirax.com while the
+// dashboard and My Courses, both real templates, worked. Moving this
+// markup into a Mustache template is the fix.
+//
+// Strips Boost's card chrome/spacing around it so the hero runs
+// edge-to-edge.
+#page-site-index .main-inner,
+#page-site-index #region-main-box,
+#page-site-index #region-main,
+#page-site-index .container,
+#page-site-index .container-fluid,
+#page-site-index #page-content {
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-top: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+// Newer Moodle 4.x course-format wrappers, with their own top padding
+// stacking on top of the hero's own.
+#page-site-index .card.generalbox,
+#page-site-index .box.generalbox,
+#page-site-index .course-content,
+#page-site-index .sitetopic,
+#page-site-index li.section.course-section,
+#page-site-index #courseformat-frontpage-main-topic,
+#page-site-index .box.generalbox.frontpage-available-course-list,
+#page #topofscroll #region-main li#section-1.section.course-section.main.clearfix.dropready,
+#page-site-index .section-item,
+#page-site-index .activity-item {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+#page-site-index header#page-header,
+#page-site-index .secondary-navigation,
+#page-site-index nav.moremenu {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+// Hides Moodle's default "Ospira LMS" page title above the hero - not
+// used on this page, left visible elsewhere.
+#page-site-index .page-header-headings {
+    display: none;
+}
+
+// Content runs edge-to-edge instead of sitting in a narrow centered
+// column.
+#page-site-index .ospira-hero {
+    background: transparent !important;
+    padding: 2rem clamp(1.5rem, 4vw, 3rem) 2.5rem;
+    box-sizing: border-box;
+}
+
+#page-site-index .ospira-stat-card {
+    background: #FFFFFF !important;
+    border: 1px solid rgba(120, 63, 170, 0.1) !important;
+    border-radius: 1rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    padding: 1.25rem;
+}
+
+#page-site-index .ospira-icon-tile {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+#page-site-index .ospira-icon-purple {
+    background: rgba(120, 63, 170, 0.12);
+}
+
+#page-site-index .ospira-icon-yellow {
+    background: rgba(255, 209, 5, 0.15);
+}
+
+// Bootstrap's .row.align-items-center was vertically centering the text
+// column against the taller photo column.
+#page-site-index .ospira-hero .row {
+    align-items: flex-start !important;
+}
+
+// ---- Premium hero: eyebrow badge / accent heading -----------------
+#page-site-index .ospira-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    background: rgba(120, 63, 170, 0.1);
+    color: $ospira-purple;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+}
+
+// 3rem, not 4rem - measured against the reference design directly.
+#page-site-index .ospira-hero-heading {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 1.25rem;
+    color: $ospira-ink;
+
+    &__accent {
+        color: $ospira-indigo;
+    }
+}
+
+#page-site-index .ospira-hero-lead {
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: rgba(43, 36, 56, 0.75);
+    max-width: 46ch;
+    margin-bottom: 1.75rem;
+}
+
+// ---- Premium hero: photo, decorative blob + dots, floating stats --
+// .ospira-hero-photo-wrap holds the photo and the two floating stat
+// cards. .ospira-hero-photo-stage wraps only the photo/blob/dots, so the
+// blob (sized as a % of its positioned ancestor) stays tied to the photo
+// instead of ballooning once the stat cards stack below it on mobile.
+// margin-left: auto pushes the photo flush right instead of centering it.
+#page-site-index .ospira-hero-photo-wrap {
+    position: relative;
+    max-width: 460px;
+    margin: 0 0 0 auto;
+    padding: 2rem 1rem 2.5rem;
+}
+
+#page-site-index .ospira-hero-photo-stage {
+    position: relative;
+}
+
+#page-site-index .ospira-hero-blob {
+    position: absolute;
+    top: -8%;
+    left: -10%;
+    width: 85%;
+    height: 85%;
+    background: linear-gradient(135deg, $ospira-blue, $ospira-indigo);
+    border-radius: 62% 38% 55% 45% / 45% 55% 45% 55%;
+    z-index: 0;
+    opacity: 0.9;
+}
+
+#page-site-index .ospira-hero-dots {
+    position: absolute;
+    right: -4%;
+    bottom: 8%;
+    width: 80px;
+    height: 80px;
+    background-image: radial-gradient(rgba(120, 63, 170, 0.35) 2px, transparent 2px);
+    background-size: 12px 12px;
+    z-index: 0;
+}
+
+#page-site-index .ospira-hero-photo-frame {
+    position: relative;
+    z-index: 1;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(43, 36, 56, 0.2);
+    aspect-ratio: 4 / 3;
+}
+
+#page-site-index .ospira-hero-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+#page-site-index .ospira-hero-stat {
+    position: absolute;
+    z-index: 2;
+    min-width: 180px;
+
+    &--one {
+        top: 0;
+        right: -5%;
+    }
+
+    &--two {
+        bottom: 0;
+        left: -5%;
+    }
+}
+
+// ---- Feature strip icons -----------------------------------------
+#page-site-index .ospira-feature-strip {
+    margin-top: 2rem;
+}
+
+#page-site-index .ospira-feature-strip h6 {
+    font-size: 0.9375rem;
+}
+
+#page-site-index .ospira-feature-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.125rem;
+    margin-bottom: 0.6rem;
+
+    &--blue   { background: rgba(70, 206, 245, 0.15); }
+    &--orange { background: rgba(248, 153, 47, 0.15); }
+    &--green  { background: rgba(99, 184, 88, 0.15); }
+    &--purple { background: rgba(120, 63, 170, 0.15); }
+}
+
+// Stack floating cards on small screens instead of clipping them at
+// negative % offsets against a narrow column.
+@media (max-width: 767.98px) {
+    #page-site-index .ospira-hero-stat {
+        position: static;
+        margin: 0 auto 1rem;
+        max-width: 320px;
+    }
+
+    #page-site-index .ospira-hero-photo-wrap {
+        padding-bottom: 1rem;
+    }
+}
+
+// ---- "My Courses" showcase section --------------------------------
+// #frontpage-available-course-list is Moodle's own auto-generated course
+// listing. Default markup per course:
+//   .coursebox > .info > h3.coursename > a
+//               > .content > .d-flex > .courseimage img + .teachers
+// Restyled into an image-on-top card via flex `order`, without touching
+// the DOM.
+//
+// The eyebrow/heading/intro/"View More" button above the list are plain
+// HTML in the same Label activity as the hero - there's no template hook
+// to inject content just before this block.
+#frontpage-available-course-list {
+    padding: 0 6vw;
+    margin-top: 2rem;
+}
+
+#frontpage-available-course-list h2 {
+    display: none; // replaced by .ospira-section-heading in the label content
+}
+
+#frontpage-available-course-list .courses.frontpage-course-list-all {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+
+#frontpage-available-course-list .coursebox {
+    display: flex;
+    flex-direction: column;
+    background: #FFFFFF !important;
+    border: 1px solid rgba(120, 63, 170, 0.1) !important;
+    border-radius: 1rem !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+#frontpage-available-course-list .coursebox:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(120, 63, 170, 0.18) !important;
+}
+
+#frontpage-available-course-list .coursebox .content {
+    order: 1;
+    margin: 0;
+}
+
+// !important on both: Bootstrap's .d-flex is itself
+// `display: flex !important` and was also constraining .courseimage/img
+// to a small fixed width.
+#frontpage-available-course-list .coursebox .content .d-flex {
+    display: block !important;
+}
+
+#frontpage-available-course-list .courseimage {
+    width: 100% !important;
+    max-width: none !important;
+}
+
+#frontpage-available-course-list .courseimage img {
+    width: 100% !important;
+    max-width: none !important;
+    height: 150px;
+    object-fit: cover;
+    display: block;
+}
+
+#frontpage-available-course-list .coursebox .teachers {
+    display: none; // card shows title only, no teacher byline
+}
+
+#frontpage-available-course-list .coursebox .info {
+    order: 2;
+    padding: 0.9rem 1rem 1.1rem;
+}
+
+#frontpage-available-course-list .coursebox .coursename {
+    margin: 0;
+}
+
+#frontpage-available-course-list .coursebox .coursename a {
+    color: $ospira-ink !important;
+    font-weight: 700 !important;
+    font-size: 0.9375rem;
+}
+
+// Eyebrow / heading / intro / "View more" - plain HTML in the label,
+// styled the same way the hero badge/heading are.
+#page-site-index .ospira-section-eyebrow {
+    display: block;
+    color: $ospira-purple;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+}
+
+#page-site-index .ospira-section-heading {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: $ospira-ink;
+    margin-bottom: 0.5rem;
+}
+
+#page-site-index .ospira-section-intro {
+    font-size: 0.9375rem;
+    color: rgba(43, 36, 56, 0.7);
+    margin-bottom: 1.5rem;
+}
+
+#page-site-index .ospira-view-more-wrap {
+    text-align: center;
+    margin-top: 1.75rem;
+}
+
+// 4 columns won't fit on small screens - collapse to one column.
+@media (max-width: 767.98px) {
+    #frontpage-available-course-list .courses.frontpage-course-list-all {
+        grid-template-columns: 1fr;
+    }
+}
+
+// ---- "Why Ospira" benefits section --------------------------------
+// Extra top padding so this section doesn't crowd the feature strip
+// above it.
+#page-site-index .ospira-benefits {
+    padding: 5rem 6vw 2.5rem;
+}
+
+#page-site-index .ospira-benefits__inner {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+}
+
+#page-site-index .ospira-benefits__content {
+    flex: 1 1 380px;
+    min-width: 300px;
+}
+
+#page-site-index .ospira-benefits__grid {
+    flex: 1 1 480px;
+    min-width: 300px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+}
+
+#page-site-index .ospira-benefit-card {
+    border-radius: 1rem;
+    padding: 1.125rem;
+    background: #FFFFFF;
+    border: 1px solid rgba(120, 63, 170, 0.1);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+#page-site-index .ospira-benefit-card__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.125rem;
+    margin-bottom: 0.75rem;
+}
+
+#page-site-index .ospira-benefit-card--blue .ospira-benefit-card__icon {
+    background: rgba(70, 206, 245, 0.18);
+}
+
+#page-site-index .ospira-benefit-card--orange .ospira-benefit-card__icon {
+    background: rgba(248, 153, 47, 0.18);
+}
+
+#page-site-index .ospira-benefit-card--green .ospira-benefit-card__icon {
+    background: rgba(99, 184, 88, 0.18);
+}
+
+#page-site-index .ospira-benefit-card--purple .ospira-benefit-card__icon {
+    background: rgba(120, 63, 170, 0.18);
+}
+
+#page-site-index .ospira-benefit-card__title {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: $ospira-ink;
+    margin-bottom: 0.4rem;
+}
+
+#page-site-index .ospira-benefit-card__desc {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: rgba(43, 36, 56, 0.7);
+    margin: 0;
+}
+
+@media (max-width: 575.98px) {
+    #page-site-index .ospira-benefits__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+// ---- Global navbar + button styling (site-wide, not page-scoped) -------
+// Navbar height comes from $navbar-height in pre.scss (~85px, up from
+// Boost's 60px default) - Boost centers content via flex, not padding, so
+// only logo size needs setting here.
+.navbar .logo,
+.navbar-brand img {
+    height: 52px !important;
+    width: auto !important;
+}
+
+// Bell/chat/user-menu icons are font-icon based (Moodle's {{#pix}}
+// helper), sized via font-size not width/height.
+.navbar .popover-region-toggle .icon {
+    font-size: 1.375rem !important;
+}
+
+.navbar .usermenu img.userpicture {
+    width: 40px !important;
+    height: 40px !important;
+}
+
+.navbar .usermenu .dropdown-toggle {
+    padding: 0.375rem !important;
+}
+
+.navbar .nav-link,
+.navbar-nav .nav-link {
+    font-size: 1.05rem !important;
+    font-weight: 600 !important;
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+    color: #333 !important;
+    position: relative;
+}
+
+.navbar .nav-link:hover,
+.navbar-nav .nav-link:hover {
+    color: $ospira-purple !important;
+}
+
+.navbar .nav-link.active,
+.navbar-nav .nav-item.active .nav-link {
+    color: $ospira-purple !important;
+}
+
+.navbar .nav-link.active::after,
+.navbar-nav .nav-item.active .nav-link::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 1.25rem;
+    right: 1.25rem;
+    height: 3px;
+    background: $ospira-purple;
+    border-radius: 2px;
+}
+
+.btn-primary {
+    background-color: $ospira-purple !important;
+    border-color: $ospira-purple !important;
+    font-weight: 600;
+    padding: 0.5rem 1.5rem;
+}
+
+// .btn-lg needs its own bump - .btn-primary/.btn-outline-primary load
+// after Bootstrap's .btn-lg at equal specificity and were overriding it.
+.btn-primary.btn-lg,
+.btn-outline-primary.btn-lg {
+    padding: 0.65rem 1.75rem;
+    font-size: 0.9375rem;
+}
+
+.btn-primary:hover {
+    background-color: darken($ospira-purple, 10%) !important;
+    border-color: darken($ospira-purple, 10%) !important;
+}
+
+.btn-outline-primary {
+    color: $ospira-purple;
+    border-color: $ospira-purple;
+    border-width: 2px;
+    border-radius: 50rem !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: $ospira-purple;
+    color: #fff;
+}
+
+// ---- Site footer (theme_boost/footer override - see
+// templates/theme_boost/footer.mustache). Fixed dark background in both
+// modes, like .ospira-hero/.ospira-dashboard-hero - a solid brand
+// surface, no separate dark-mode override needed.
+.ospira-footer {
+    background: #17131F;
+    padding: 2rem 1.5rem 0;
+
+    // Breaks out of Boost's centered .main-inner wrapper (see
+    // theme/boost/scss/moodle/layout.scss) so the footer runs full-bleed
+    // like the navbar, on every page main-inner appears on.
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+
+    &__top {
+        max-width: 1200px;
+        margin: 0 auto;
+        text-align: center;
+        padding-bottom: 1.75rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    &__brand {
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.125rem;
+        margin-bottom: 0.5rem;
+    }
+
+    // Moodle's own login_info HTML (a plain sentence + <a> logout link).
+    &__logininfo {
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 0.9375rem;
+
+        a {
+            color: #fff;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+    }
+
+    &__columns {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+        padding: 2rem 1.5rem;
+        text-align: center;
+
+        // Divider between the two footer columns.
+        @media (min-width: 576px) {
+            .ospira-footer__col:first-child {
+                border-right: 1px solid rgba(255, 255, 255, 0.1);
+            }
+        }
+    }
+
+    &__heading {
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.0625rem;
+        margin-bottom: 1.25rem;
+    }
+
+    &__icons {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+        // Stays white in both modes - excluded from the dark-mode link
+        // catch-all further below.
+        color: #fff;
+        font-size: 1.125rem;
+        transition: background 0.15s ease, transform 0.15s ease;
+
+        // Moodle's .icon class adds margin-right for icon+text pairs;
+        // not needed with no text next to it here.
+        .icon {
+            margin-right: 0;
+        }
+
+        &:hover,
+        &:focus {
+            background: $ospira-purple;
+            color: #fff !important;
+            transform: translateY(-2px);
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        &__columns {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+    }
+}
+
+// ---- theme_ospira/dashboard (custom My Moodle page - see
+// classes/output/core_renderer.php::custom_block_region()) --------------
+// Strips Boost's boxed .main-inner/#region-main so the hero runs
+// edge-to-edge, same treatment as the legacy front page.
+// body.pagelayout-mydashboard scopes this to the Dashboard specifically.
+body.pagelayout-mydashboard .main-inner,
+body.pagelayout-mydashboard #region-main {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+// Hides Moodle's generic "Dashboard" page title - redundant next to the
+// hero's own "Hi, {name}!" heading.
+body.pagelayout-mydashboard .page-header-headings {
+    display: none;
+}
+
+// Hides Moodle's separate activity-header greeting ($PAGE->activityheader,
+// its own <h1> inside #page-header) that duplicates the hero's own
+// greeting. #page-header is shared with My Courses' real Manage/Create
+// buttons, so this only targets the <h1>.
+body.pagelayout-mydashboard #page-header h1 {
+    display: none;
+}
+
+// ---- My Courses page (/my/courses.php, pagelayout "mycourses") --------
+// Same edge-to-edge fix as the Dashboard above. Unlike the Dashboard,
+// this page's title and Manage/Create course buttons stay useful, so
+// only the width cap and card chrome are stripped.
+//
+// .ospira-mycourses-header (below) supplies its own "My Courses" title,
+// so Moodle's native page title is hidden to avoid showing it twice.
+// The Manage/Create buttons in that same header row are real,
+// capability-gated admin controls and stay untouched.
+body.pagelayout-mycourses .main-inner,
+body.pagelayout-mycourses #region-main {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+body.pagelayout-mycourses .page-header-headings {
+    display: none;
+}
+
+// The header row's buttons and the course-overview block share a
+// max-width so they don't stretch edge-to-edge on wide screens.
+body.pagelayout-mycourses .header-maxwidth,
+body.pagelayout-mycourses .block_myoverview {
+    max-width: 1200px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+// block_myoverview carries Bootstrap's .card class, rendering the whole
+// "Course overview" section as one boxed card. Stripped so it flows on
+// the page background like the rest of the site; the course cards inside
+// keep their own .card styling.
+body.pagelayout-mycourses .block_myoverview {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+// ---- Custom header (.ospira-mycourses-header) ----------------------
+.ospira-mycourses-header {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 0;
+
+    &__eyebrow {
+        display: block;
+        color: $ospira-purple;
+        font-weight: 700;
+        font-size: 0.8125rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+    }
+
+    &__headline {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: $ospira-ink;
+        margin: 0 0 0.5rem;
+    }
+
+    &__subtext {
+        font-size: 1rem;
+        color: rgba(43, 36, 56, 0.7);
+        margin: 0;
+        max-width: 60ch;
+    }
+
+    &__tiles {
+        margin-top: 2rem;
+        margin-bottom: 0;
+    }
+}
+
+// ---- Restyled course cards (Moodle's real block_myoverview cards) ---
+// Only visual - doesn't touch the block's own search/sort/filter/
+// favourite JS.
+body.pagelayout-mycourses {
+    .course-card {
+        border: 1px solid rgba(120, 63, 170, 0.1);
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(120, 63, 170, 0.18);
+        }
+    }
+
+    .card-img-top {
+        border-radius: 0;
+        aspect-ratio: 16 / 9;
+    }
+
+    .aalink.coursename {
+        color: $ospira-ink !important;
+        font-weight: 700;
+    }
+
+    // Search/sort/grouping/display-selector dropdown toggles, restyled
+    // as pill buttons.
+    .btn-outline-secondary.dropdown-toggle {
+        border-radius: 999px !important;
+        border-width: 2px !important;
+        font-weight: 600;
+    }
+}
+
+// ---- Progress bar (theme override of block_myoverview/progress-bar) --
+.ospira-mycourses-progress {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0 1rem 1rem;
+    width: 100%;
+
+    &__bar {
+        flex: 1 1 auto;
+        height: 8px;
+        border-radius: 999px;
+        background: $ospira-gray;
+        overflow: hidden;
+
+        span {
+            display: block;
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, $ospira-blue, $ospira-indigo);
+        }
+    }
+
+    &__value {
+        flex: 0 0 auto;
+        font-size: 0.8125rem;
+        font-weight: 700;
+        color: $ospira-purple;
+    }
+}
+
+// ---- Dark mode -----------------------------------------------------
+// Toggled via class="ospira-dark" on <html> - see the toggle button and
+// script injected in classes/output/core_renderer.php.
+// `background` (not `background-color`) clears the gradient image set
+// above; higher specificity than "html, body" beats its !important.
+html.ospira-dark,
+html.ospira-dark body {
+    background: #121212 !important;
+    color: #EDEDED !important;
+}
+
+html.ospira-dark .navbar {
+    background-color: #1A1A1A !important;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+// Smooth transition instead of a flash when toggling.
+html, html.ospira-dark,
+body, .navbar, .card, h1, h2, h3, h4, h5, h6, p, a,
+.ospira-hero, .ospira-stat-card, .ospira-feature,
+.btn-primary, .btn-outline-primary {
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+html.ospira-dark .navbar .nav-link {
+    color: #EDEDED !important;
+}
+
+// Catch-all: Moodle's own page headings, breadcrumbs, and body text
+// don't use .ospira-* classes, so they need this explicit override.
+html.ospira-dark h1,
+html.ospira-dark h2,
+html.ospira-dark h3,
+html.ospira-dark h4,
+html.ospira-dark h5,
+html.ospira-dark h6,
+html.ospira-dark .page-header-headings,
+html.ospira-dark .breadcrumb,
+html.ospira-dark .breadcrumb-item,
+html.ospira-dark p,
+html.ospira-dark label,
+html.ospira-dark .container,
+html.ospira-dark #page,
+html.ospira-dark #page-content {
+    color: #EDEDED !important;
+}
+
+// .ospira-footer__icon excluded here (rather than overridden separately
+// below) - each :not() adds specificity, so excluding it lets its own
+// plain `color: #fff` declaration apply untouched.
+html.ospira-dark a:not(.btn-primary):not(.btn-outline-primary):not(.ospira-btn--primary):not(.ospira-btn--secondary):not(.ospira-footer__icon) {
+    color: #B79CE0 !important; // lighter purple, readable on dark bg
+}
+
+html.ospira-dark .card,
+html.ospira-dark .ospira-stat-card,
+html.ospira-dark .ospira-feature {
+    background-color: #1E1E1E !important;
+    color: #EDEDED !important;
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.4) !important;
+}
+
+// .main-inner is Boost's default white content wrapper, used sitewide.
+// #region-main is a second white wrapper Boost uses on some layouts.
+// .secondary-navigation/nav.moremenu previously only had a dark override
+// scoped to the front page, so they stayed white everywhere else.
+html.ospira-dark .main-inner,
+html.ospira-dark #region-main,
+html.ospira-dark .secondary-navigation,
+html.ospira-dark nav.moremenu,
+html.ospira-dark .nav-tabs {
+    background-color: #1E1E1E !important;
+}
+
+// Dashboard's .main-inner stays transparent in both modes (see
+// body.pagelayout-mydashboard .main-inner above) - beats the generic
+// rule just above on specificity.
+html.ospira-dark body.pagelayout-mydashboard .main-inner {
+    background: transparent !important;
+}
+
+// Quiz pages have three more "light card, no dark-mode override" spots:
+// the activity intro box (+ its completion badge), the per-question info
+// panel on the attempt/preview page, and the numbered quiz-navigation
+// buttons.
+html.ospira-dark .activity-header,
+html.ospira-dark .badge.bg-light,
+html.ospira-dark .que .info,
+html.ospira-dark #mod_quiz_navblock .qnbutton {
+    background-color: #1E1E1E !important;
+    color: #EDEDED !important;
+}
+
+// Moodle's .badge uses mix-blend-mode: multiply, which darkens the badge
+// text against our now-dark background - cancel it so the colors above
+// render as declared.
+html.ospira-dark .badge.bg-light {
+    mix-blend-mode: normal !important;
+}
+
+// Same issue on the quiz Results report: .highlight/.gradedattempt spans
+// (used to call out the grading method) keep their light-blue background
+// in dark mode. Scoped to `span` only - .gradedattempt is reused on a
+// results-table row elsewhere that should stay untouched.
+html.ospira-dark span.highlight,
+html.ospira-dark span.gradedattempt {
+    background-color: #1E1E1E !important;
+    color: #EDEDED !important;
+}
+
+// The legacy front page's cards use ID-scoped selectors with !important
+// - matching the ID scoping here to win on specificity.
+html.ospira-dark #page-site-index .ospira-stat-card,
+html.ospira-dark #frontpage-available-course-list .coursebox,
+html.ospira-dark #frontpage-available-course-list .card {
+    background: #1E1E1E !important;
+    color: #EDEDED !important;
+}
+
+// .coursebox .coursename a has its own ink-colored !important rule, so it
+// needs its own dark override too.
+html.ospira-dark #frontpage-available-course-list .coursebox .coursename a {
+    color: #EDEDED !important;
+}
+
+// .ospira-benefit-card stays white in dark mode; its title/desc text
+// needs restoring to ink color after the sitewide h1-6/p catch-all
+// lightens it.
+html.ospira-dark #page-site-index .ospira-benefit-card__title {
+    color: $ospira-ink !important;
+}
+
+html.ospira-dark #page-site-index .ospira-benefit-card__desc {
+    color: rgba(43, 36, 56, 0.7) !important;
+}
+
+// Purple badge/eyebrow text needs a lighter purple against the now-dark
+// page background (otherwise ~2.76:1, under the 4.5:1 AA minimum).
+html.ospira-dark #page-site-index .ospira-hero-badge,
+html.ospira-dark #page-site-index .ospira-section-eyebrow {
+    color: #B79CE0 !important;
+}
+
+// .ospira-hero has no dark-mode override on purpose: it is transparent on
+// the front page, so the now-dark body shows through it.
+
+html.ospira-dark .lead,
+html.ospira-dark .text-muted,
+html.ospira-dark .ospira-feature__label {
+    color: #b8b8b8 !important;
+}
+
+// .categoryname (My Courses category label) carries its own color, not
+// inherited from its .text-muted parent's override above.
+html.ospira-dark .categoryname {
+    color: #b8b8b8 !important;
+}
+
+// Bootstrap's .text-dark utility (e.g. the file picker's "Accepted file
+// types" text) had no dark-mode override.
+html.ospira-dark .text-dark {
+    color: #EDEDED !important;
+}
+
+// Dropdown menus (navbar user menu, block/action "..." menus) keep their
+// white background in dark mode; their <a> items get swept into
+// low-contrast purple by the link catch-all above.
+html.ospira-dark .dropdown-menu {
+    background-color: #1E1E1E !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+}
+
+html.ospira-dark .dropdown-item {
+    color: #EDEDED !important;
+}
+
+html.ospira-dark .dropdown-item:hover,
+html.ospira-dark .dropdown-item:focus {
+    background-color: #2A2A2A !important;
+    color: #EDEDED !important;
+}
+
+// .ospira-stat-card__value/__label set their own explicit light-mode
+// color, so they need their own dark overrides too (not inherited from
+// the parent card).
+html.ospira-dark .ospira-stat-card__value {
+    color: #EDEDED !important;
+}
+
+html.ospira-dark .ospira-stat-card__label {
+    color: #b8b8b8 !important;
+}
+
+html.ospira-dark .btn-outline-primary {
+    border-color: #EDEDED !important;
+    color: #EDEDED !important;
+}
+
+html.ospira-dark .btn-outline-primary:hover {
+    background: #EDEDED !important;
+    color: #121212 !important;
+}
+
+// Bootstrap's default .btn-outline-secondary (Dashboard's filter/sort
+// buttons) had no override, same treatment as .btn-outline-primary above.
+html.ospira-dark .btn-outline-secondary {
+    border-color: #EDEDED !important;
+    color: #EDEDED !important;
+}
+
+html.ospira-dark .btn-outline-secondary:hover {
+    background: #EDEDED !important;
+    color: #121212 !important;
+}
+
+// ---- Toggle button itself ---------------------------------------
+#ospira-theme-toggle {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1050;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    background: $ospira-purple;
+    color: #fff;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+
+#ospira-theme-toggle:hover {
+    transform: scale(1.06);
+    background: darken($ospira-purple, 10%);
+}
+
+// ---- .ospira-btn - shared pill-button component ---------------------
+// Used by theme_ospira/dashboard and theme_ospira/mycourses-header, both
+// of which render inside real Boost chrome.
+.ospira-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.75rem;
+    border-radius: 999px;
+    font-family: $font-family-sans-serif;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    line-height: 1;
+    border: 2px solid transparent;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+
+    &:hover,
+    &:focus {
+        transform: translateY(-1px);
+    }
+
+    &--primary {
+        background: $ospira-blue;
+        color: $ospira-ink;
+        box-shadow: 0 8px 20px rgba(70, 206, 245, 0.4);
+
+        &:hover,
+        &:focus {
+            opacity: 0.92;
+            color: $ospira-ink;
+        }
+    }
+
+    // Solid white fill (not transparent) - sits on a solid-purple hero,
+    // needs reliable contrast regardless of what's behind it.
+    &--secondary {
+        background: #fff;
+        color: $ospira-purple;
+        border-color: #fff;
+
+        &:hover,
+        &:focus {
+            background: $ospira-gray;
+            color: $ospira-purple;
+            border-color: $ospira-gray;
+        }
+    }
+
+    &--ghost {
+        background: transparent;
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.6);
+
+        &:hover,
+        &:focus {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+    }
+}
+
+
+// ---- theme_ospira/dashboard -------------------------------------
+// Renders inside real Boost chrome (navbar, drawers) via
+// custom_block_region('content') - see classes/output/core_renderer.php.
+// Own scope (.ospira-dashboard), separate from the front page hero.
+.ospira-dashboard {
+    font-family: $font-family-sans-serif;
+
+    a {
+        text-decoration: none;
+    }
+
+    // ---- Hero ---------------------------------------------------
+    // Same purple/blue/pink gradient treatment as .ospira-hero - fixed in
+    // both dark/light modes since text/buttons sit directly on it.
+    &-hero {
+        position: relative;
+        background:
+            radial-gradient(circle at 12% 15%, rgba(255, 209, 5, 0.28), transparent 42%),
+            radial-gradient(circle at 88% 90%, rgba(237, 25, 106, 0.24), transparent 48%),
+            linear-gradient(135deg, $ospira-purple 0%, darken($ospira-purple, 6%) 45%, $ospira-indigo 100%);
+        // Rounded corners so it reads as a card, not a hard rectangle
+        // against the navbar/tiles.
+        border-radius: 1.5rem;
+        padding: 2.5rem 1.5rem 0;
+
+        &__inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            padding-bottom: 3rem;
+        }
+
+        &__content {
+            flex: 1 1 420px;
+            min-width: 300px;
+        }
+
+        &__eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 1rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        &__headline {
+            color: #fff;
+            font-size: 2.25rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin: 0 0 0.75rem;
+        }
+
+        &__subtext {
+            color: rgba(255, 255, 255, 0.92);
+            font-size: 1.0625rem;
+            line-height: 1.6;
+            margin: 0 0 1.75rem;
+            max-width: 44ch;
+        }
+
+        &__actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        &__visual {
+            flex: 1 1 360px;
+            min-width: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-bottom: 2rem;
+        }
+
+        // Positioning context for the floating stat cards, sized to the
+        // photo itself (not the wider flex __visual container), so
+        // top/left/right/bottom on .ospira-dashboard-stat land relative
+        // to the photo's own edges.
+        &__photo-wrap {
+            position: relative;
+            width: 100%;
+            max-width: 380px;
+            padding: 1.5rem 1rem 2rem;
+        }
+
+        // Wraps only the blob/dots/photo, so the blob's % sizing stays
+        // tied to the photo alone and isn't affected by the stat cards
+        // stacking below it on mobile.
+        &__photo-stage {
+            position: relative;
+        }
+
+        // The family photo has a near-white background - this gradient
+        // blob gives it a frame instead of floating bare on the hero.
+        &__blob {
+            position: absolute;
+            top: -8%;
+            left: -10%;
+            width: 85%;
+            height: 85%;
+            background: linear-gradient(135deg, $ospira-blue, $ospira-indigo);
+            border-radius: 62% 38% 55% 45% / 45% 55% 45% 55%;
+            z-index: 0;
+            opacity: 0.9;
+        }
+
+        &__dots {
+            position: absolute;
+            right: -6%;
+            bottom: 10%;
+            width: 70px;
+            height: 70px;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.5) 2px, transparent 2px);
+            background-size: 12px 12px;
+            z-index: 0;
+        }
+
+        &__photo {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+            display: block;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 40px rgba(43, 36, 56, 0.25);
+        }
+    }
+
+    // ---- Floating stat cards on the hero photo -------------------
+    &-stat {
+        position: absolute;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: #fff;
+        border-radius: 1rem;
+        padding: 1rem 1.25rem;
+        box-shadow: 0 12px 30px rgba(43, 36, 56, 0.18);
+        min-width: 190px;
+
+        &__icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(70, 206, 245, 0.15);
+            color: $ospira-purple;
+            font-size: 1.125rem;
+            flex-shrink: 0;
+        }
+
+        &__value {
+            display: block;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: $ospira-ink;
+        }
+
+        &__label {
+            display: block;
+            font-size: 0.8125rem;
+            color: rgba(43, 36, 56, 0.65);
+        }
+
+        &--one {
+            top: -1rem;
+            left: -1rem;
+        }
+
+        &--two {
+            bottom: -1rem;
+            right: -1rem;
+
+            .ospira-dashboard-stat__icon {
+                background: rgba(99, 184, 88, 0.15);
+                color: $ospira-green;
+            }
+        }
+    }
+
+    // ---- Body: everything below the hero --------------------------
+    &-body {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem 3rem;
+    }
+
+    // ---- Quick-stat tiles ------------------------------------------
+    // 3 tiles (Certificates Earned removed) - repeat(3, ...) instead of a
+    // fixed 4th column so the remaining tiles widen to fill the row.
+    &-tiles {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        margin-top: 2.5rem;
+    }
+
+    &-tile {
+        background: #fff;
+        border: 1px solid rgba(120, 63, 170, 0.1);
+        border-radius: 1rem;
+        padding: 1.25rem;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        &__icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.125rem;
+            color: #fff;
+
+            &--blue   { background: $ospira-blue; }
+            &--orange { background: $ospira-orange; }
+            &--pink   { background: $ospira-pink; }
+            &--green  { background: $ospira-green; }
+        }
+
+        &__value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: $ospira-ink;
+        }
+
+        &__label {
+            font-size: 0.8125rem;
+            color: rgba(43, 36, 56, 0.65);
+        }
+    }
+
+    // ---- Analytics row: progress list + ring ------------------------
+    &-analytics {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr;
+        gap: 1.5rem;
+        margin-top: 2rem;
+
+        @media (max-width: 900px) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    &-panel {
+        background: #fff;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        border: 1px solid rgba(120, 63, 170, 0.1);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+
+        h2 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: $ospira-ink;
+            margin: 0 0 0.25rem;
+        }
+
+        &__intro {
+            font-size: 0.875rem;
+            color: rgba(43, 36, 56, 0.65);
+            margin: 0 0 1.25rem;
+        }
+    }
+
+    &-progress-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        li {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        a {
+            flex: 1 1 200px;
+            font-weight: 600;
+            color: $ospira-ink;
+            font-size: 0.9375rem;
+        }
+    }
+
+    &-progress-bar {
+        flex: 1 1 140px;
+        height: 8px;
+        border-radius: 999px;
+        background: $ospira-gray;
+        overflow: hidden;
+
+        span {
+            display: block;
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, $ospira-blue, $ospira-indigo);
+        }
+    }
+
+    &-progress-value {
+        font-size: 0.8125rem;
+        font-weight: 700;
+        color: $ospira-purple;
+        min-width: 2.5rem;
+        text-align: right;
+
+        &--muted {
+            color: rgba(43, 36, 56, 0.5);
+            font-weight: 600;
+        }
+    }
+
+    &-empty {
+        color: rgba(43, 36, 56, 0.6);
+        font-size: 0.9375rem;
+        margin: 0;
+    }
+
+    // CSS-only ring (conic-gradient) - no JS charting library.
+    &-ring {
+        --ospira-progress: 0;
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        margin: 0 auto;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: conic-gradient($ospira-blue calc(var(--ospira-progress) * 1%), $ospira-gray 0);
+
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 14px;
+            border-radius: 50%;
+            background: #fff;
+        }
+
+        &__value {
+            position: relative;
+            z-index: 1;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: $ospira-ink;
+        }
+    }
+
+    // ---- Recently accessed courses -----------------------------------
+    &-recent {
+        margin-top: 2rem;
+
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: $ospira-ink;
+            margin: 0 0 1rem;
+        }
+
+        &__grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+
+            @media (max-width: 900px) {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            @media (max-width: 575.98px) {
+                grid-template-columns: 1fr;
+            }
+        }
+    }
+
+    &-course-card {
+        display: block;
+        background: #fff;
+        border: 1px solid rgba(120, 63, 170, 0.1);
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(120, 63, 170, 0.18);
+        }
+
+        // aspect-ratio instead of a fixed height, so these banner-style
+        // cover images (title baked into the image) don't get cropped
+        // illegibly thin.
+        &__image {
+            aspect-ratio: 16 / 9;
+            background-size: cover;
+            background-position: center;
+            background-color: $ospira-gray;
+        }
+
+        &__title {
+            padding: 0.85rem 1rem;
+            font-weight: 700;
+            font-size: 0.9375rem;
+            color: $ospira-ink;
+        }
+    }
+
+    // ---- Assignments due soon -----------------------------------------
+    &-assignments {
+        margin-top: 2rem;
+
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: $ospira-ink;
+            margin: 0 0 1rem;
+        }
+
+        &-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            background: #fff;
+            border-radius: 1rem;
+            border: 1px solid rgba(120, 63, 170, 0.1);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+
+            li {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 1rem;
+                padding: 0.9rem 1.25rem;
+                border-bottom: 1px solid rgba(120, 63, 170, 0.08);
+
+                &:last-child {
+                    border-bottom: none;
+                }
+            }
+
+            a {
+                font-weight: 600;
+                color: $ospira-ink;
+                font-size: 0.9375rem;
+            }
+        }
+
+        // Task name over its course/section line. min-width: 0 lets the
+        // context line truncate instead of forcing the row wider than the
+        // panel - course fullnames run long.
+        &-main {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+            min-width: 0;
+        }
+
+        &-context {
+            font-size: 0.8125rem;
+            color: rgba(43, 36, 56, 0.6);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &-date {
+            font-size: 0.8125rem;
+            color: rgba(43, 36, 56, 0.6);
+            flex-shrink: 0;
+        }
+    }
+
+    // ---- Small screens --------------------------------------------
+    @media (max-width: 767.98px) {
+        &-hero__headline {
+            font-size: 1.75rem;
+        }
+
+        &-stat {
+            position: static;
+            margin: 0 auto 1rem;
+            max-width: 320px;
+        }
+
+        &-hero__visual {
+            padding-bottom: 1rem;
+        }
+
+        &-tiles {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+}
+
+// ---- Dark mode: theme_ospira/dashboard --------------------------------
+// White cards need explicit dark backgrounds; span/div text not caught
+// by the sitewide h1-6/p catch-all needs its own light color.
+//
+// .ospira-dashboard-stat (the floating cards) is excluded - they sit on
+// the always-purple hero photo, not the page background, so they should
+// stay white-on-purple in both modes.
+html.ospira-dark .ospira-dashboard-tile,
+html.ospira-dark .ospira-dashboard-panel,
+html.ospira-dark .ospira-dashboard-course-card,
+html.ospira-dark .ospira-dashboard-assignments-list {
+    background: #1E1E1E !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.4) !important;
+}
+
+html.ospira-dark .ospira-dashboard-tile__value,
+html.ospira-dark .ospira-dashboard-course-card__title,
+html.ospira-dark .ospira-dashboard-ring__value {
+    color: #EDEDED !important;
+}
+
+html.ospira-dark .ospira-dashboard-tile__label,
+html.ospira-dark .ospira-dashboard-assignments-date,
+html.ospira-dark .ospira-dashboard-assignments-context,
+html.ospira-dark .ospira-dashboard-progress-value--muted {
+    color: #b8b8b8 !important;
+}
+
+// Lighter purple for AA contrast on the dark panel, same as sitewide.
+html.ospira-dark .ospira-dashboard-progress-value {
+    color: #B79CE0 !important;
+}
+
+html.ospira-dark .ospira-dashboard-progress-bar {
+    background: #333333 !important;
+}
+
+html.ospira-dark .ospira-dashboard-ring {
+    background: conic-gradient($ospira-blue calc(var(--ospira-progress) * 1%), #333333 0) !important;
+
+    &::before {
+        background: #1E1E1E !important;
+    }
+}
+
+html.ospira-dark .ospira-dashboard-course-card__image {
+    background-color: #2A2A2A !important;
+}
+
+html.ospira-dark .ospira-dashboard-assignments-list li {
+    border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+// ---- Dark mode: My Courses page --------------------------------------
+// block_myoverview also carries .card, so the sitewide dark .card rule
+// above (same specificity, comes later) would otherwise win the cascade
+// and re-paint this stripped-transparent box - re-assert transparent
+// after it.
+html.ospira-dark body.pagelayout-mycourses .block_myoverview {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+// __headline/__subtext are a real <h1>/<p>, already covered by the
+// sitewide h1-6/p catch-all - only the eyebrow span needs its own
+// override.
+html.ospira-dark .ospira-mycourses-header__eyebrow {
+    color: #B79CE0 !important;
+}
+
+// .aalink.coursename set an explicit ink color above (beating the
+// sitewide link-color catch-all on specificity), so it needs its own
+// dark override too.
+html.ospira-dark body.pagelayout-mycourses .aalink.coursename {
+    color: #EDEDED !important;
+}
+
+// coursecard.mustache wraps the progress bar and 3-dot menu each in
+// their own Bootstrap .card-footer.bg-white - a second white background
+// nested inside .course-card, separate from the card's own.
+html.ospira-dark body.pagelayout-mycourses .card-footer.bg-white {
+    background-color: #1E1E1E !important;
+}
+
+html.ospira-dark .ospira-mycourses-progress__bar {
+    background: #333333 !important;
+}
+
+// The List/Summary display modes render each course as a Bootstrap
+// .list-group-item instead of .course-card - a different component,
+// untouched by the rules above. Left unfixed, the sitewide dark-mode
+// link color recolors the title while the row stays white - 2.37:1,
+// under the 4.5:1 AA minimum.
+html.ospira-dark body.pagelayout-mycourses .list-group-item {
+    background-color: #1E1E1E !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+// Same low-contrast-on-dark issue as .ospira-dashboard-progress-value.
+html.ospira-dark .ospira-mycourses-progress__value {
+    color: #B79CE0 !important;
+}
+
+// ---- Dark mode: login page ---------------------------------------------
+// .login-container (Boost's login-page card) had no dark-mode override,
+// so it stayed white while the sitewide catch-all turned its
+// headings/labels near-white. "Lost password?" already gets the sitewide
+// dark-mode link color from the catch-all elsewhere - fixing the
+// background here is enough, no separate link rule needed.
+html.ospira-dark .login-container {
+    background-color: #1E1E1E !important;
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.4) !important;
+}

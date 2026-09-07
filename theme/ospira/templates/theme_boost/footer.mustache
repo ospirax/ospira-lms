@@ -1,0 +1,71 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_boost/footer (theme_ospira override)
+
+    Theme override of theme_boost/footer. Must live at
+    theme/ospira/templates/theme_boost/footer.mustache (component
+    subdirectory) - Moodle's override lookup keys on component/
+    template-name, same convention as block_myoverview/progress-bar.mustache.
+
+    Boost's own footer hides output.login_info behind a collapsed
+    footer-content-popover only opened via a small "?" button. This drops
+    that popover and rebuilds the footer instead: a centered brand/
+    login-info band, then a Contact us / Follow us icon row. No "Get the
+    mobile app" column - there's no app to link to. standard_footer_html
+    and standard_end_of_body_html stay unconditional since other plugins
+    hook output into them; the debug bar is unrelated to the popover and
+    kept as-is.
+
+    Example context (json):
+    {
+        "output": {
+            "login_info": "You are logged in as cute kitten",
+            "moodle_release": "90210"
+        }
+    }
+}}
+<footer id="page-footer" class="ospira-footer">
+    <div class="ospira-footer__top">
+        <div class="ospira-footer__brand">Ospira LMS</div>
+        <div class="ospira-footer__logininfo">{{{ output.login_info }}}</div>
+    </div>
+    <div class="ospira-footer__columns">
+        <div class="ospira-footer__col">
+            <h3 class="ospira-footer__heading">Contact us</h3>
+            <div class="ospira-footer__icons">
+                <a href="mailto:support@ospirax.com" class="ospira-footer__icon" aria-label="Email"><i class="icon fa fa-envelope fa-fw" aria-hidden="true"></i></a>
+                <a href="tel:+919606852315" class="ospira-footer__icon" aria-label="Phone"><i class="icon fa fa-phone fa-fw" aria-hidden="true"></i></a>
+            </div>
+        </div>
+        <div class="ospira-footer__col">
+            <h3 class="ospira-footer__heading">Follow us</h3>
+            <div class="ospira-footer__icons">
+                <a href="https://www.facebook.com/ospirax" target="_blank" rel="noopener" class="ospira-footer__icon" aria-label="Facebook"><i class="icon fa fa-facebook fa-fw" aria-hidden="true"></i></a>
+                <a href="https://www.instagram.com/ospira_x/" target="_blank" rel="noopener" class="ospira-footer__icon" aria-label="Instagram"><i class="icon fa fa-instagram fa-fw" aria-hidden="true"></i></a>
+                <a href="https://www.linkedin.com/company/ospirax/" target="_blank" rel="noopener" class="ospira-footer__icon" aria-label="LinkedIn"><i class="icon fa fa-linkedin fa-fw" aria-hidden="true"></i></a>
+            </div>
+        </div>
+    </div>
+    {{{ output.standard_footer_html }}}
+    {{{ output.standard_end_of_body_html }}}
+    <div class="footer-content-debugging footer-dark bg-dark text-light">
+        <div class="container-fluid footer-dark-inner">
+            {{{ output.debug_footer_html }}}
+        </div>
+    </div>
+</footer>
