@@ -50,6 +50,12 @@ class core_renderer extends \theme_boost\output\core_renderer {
      * the button unclickable. Toggles an "ospira-dark" class on <html> and
      * remembers the choice in localStorage; CSS lives in scss/ospira.scss.
      *
+     * Also emits the login-page brand panel (see
+     * templates/login-aside.mustache). This hook is the one place every
+     * layout renders before its own content, so the panel can be placed in
+     * the left column by CSS without forking core/loginform and its
+     * authentication markup into this theme.
+     *
      * @return string
      */
     public function standard_top_of_body_html(): string {
@@ -81,7 +87,53 @@ class core_renderer extends \theme_boost\output\core_renderer {
 </script>
 HTML;
 
-        return parent::standard_top_of_body_html() . $toggle;
+        $html = parent::standard_top_of_body_html() . $toggle;
+
+        // pagelayout, not pagetype - 'login' covers log in, sign up and
+        // lost password, which all deserve the same branded screen.
+        if ($this->page->pagelayout === 'login') {
+            $html .= $this->render_from_template('theme_ospira/login-aside', theme_ospira_get_login_aside_context());
+        }
+
+        return $html;
+    }
+
+    /**
+     * Empties the debug footer when there is nothing to debug.
+     *
+     * The parent always plants a placeholder token here for performance
+     * info, which footer() later swaps for the real numbers - or, unless
+     * MDL_PERF or $CFG->perfdebug > 7 is set, for nothing at all. So the
+     * string is never empty when the footer template asks for it, even
+     * though what finally lands on the page usually is: that is what left
+     * an empty black strip across the bottom of every page, and what the
+     * {{#output.debug_footer_html}} guard in
+     * templates/theme_boost/footer.mustache could not catch on its own.
+     *
+     * Dropping the placeholder when core is going to discard it anyway
+     * makes the string genuinely empty, so the guard skips the band. When
+     * a developer does switch performance info on, the placeholder stays
+     * and the band renders exactly as core intends.
+     *
+     * @return string
+     */
+    public function debug_footer_html() {
+        global $CFG;
+
+        $html = parent::debug_footer_html();
+
+        // Same condition core uses in footer() before it replaces the
+        // token - MDL_PERF_TEST is included because core re-adds the token
+        // itself in that mode.
+        $wantsperformanceinfo = MDL_PERF
+            || MDL_PERF_TEST
+            || (!empty($CFG->perfdebug) && $CFG->perfdebug > 7);
+
+        if (!$wantsperformanceinfo) {
+            $html = str_replace($this->unique_performance_info_token, '', $html);
+        }
+
+        return trim($html) === '' ? '' : $html;
     }
 
     /**

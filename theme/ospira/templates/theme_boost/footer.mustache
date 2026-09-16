@@ -63,9 +63,21 @@
     </div>
     {{{ output.standard_footer_html }}}
     {{{ output.standard_end_of_body_html }}}
-    <div class="footer-content-debugging footer-dark bg-dark text-light">
-        <div class="container-fluid footer-dark-inner">
-            {{{ output.debug_footer_html }}}
+    {{! Boost renders this band unconditionally, so with debugging off -
+        i.e. always, in production - it draws an empty black strip across
+        the bottom of every page. Under Boost's own footer it is invisible;
+        under this theme's login screen, which hides the footer bands, it
+        stood out as a black bar below the card. The section below renders
+        the band only when there is debug output to show, and the dot
+        inside it is that output, already fetched by the section itself.
+        Core returns whitespace rather than an empty string when debugging
+        is off, which Mustache reads as truthy - see
+        core_renderer::debug_footer_html() in this theme, which trims it. }}
+    {{#output.debug_footer_html}}
+        <div class="footer-content-debugging footer-dark bg-dark text-light">
+            <div class="container-fluid footer-dark-inner">
+                {{{ . }}}
+            </div>
         </div>
-    </div>
+    {{/output.debug_footer_html}}
 </footer>

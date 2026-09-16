@@ -52,6 +52,31 @@ function theme_ospira_get_frontpage_context(): array {
 }
 
 /**
+ * Template context for the brand panel beside the login card - see
+ * classes/output/core_renderer.php::standard_top_of_body_html().
+ *
+ * Nothing user-specific here, and no statistics: nobody is logged in on a
+ * login page, so any progress or achievement number shown beside the form
+ * would be invented.
+ *
+ * @return array Context for the theme_ospira/login-aside template.
+ */
+function theme_ospira_get_login_aside_context(): array {
+    global $OUTPUT;
+
+    return [
+        // Shown inside the CSS laptop in the study scene. Same photo as
+        // the Dashboard hero - a cutout on white, which is what lets it
+        // sit on the laptop's white screen without a visible edge.
+        'photourl' => $OUTPUT->image_url('dashboard/family', 'theme_ospira')->out(false),
+        // redirect=0 for the same reason as the Dashboard's homeurl: this
+        // instance's default-homepage setting otherwise bounces / to /my/,
+        // which on a login page just returns the visitor to the login form.
+        'homeurl' => (new moodle_url('/', ['redirect' => 0]))->out(false),
+    ];
+}
+
+/**
  * Outstanding Assignment/Quiz activities for $userid across $courseids.
  *
  * "Outstanding" deliberately does not hang on activity completion alone.

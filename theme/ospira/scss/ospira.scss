@@ -863,6 +863,705 @@ body.pagelayout-mycourses {
     }
 }
 
+// ---- Login / sign-up / lost-password screen ---------------------------
+// Boost's login layout (theme/boost/layout/login.php) renders no navbar
+// and no drawers - just
+//   #page-wrapper > [standard_top_of_body_html] > #page > #page-content
+//   > #region-main-box > #region-main > .login-wrapper > .login-container
+// - so the whole viewport is free. It is treated as one continuous
+// surface: the site's own background gradient (see `html, body` above)
+// runs through it edge to edge, the injected brand panel
+// (templates/login-aside.mustache) sits on the left of it, and Moodle's
+// own untouched login card sits on the right. Nothing is painted behind
+// the panel on purpose - a coloured slab there reads as a separate page
+// bolted onto this one rather than as this site's login screen.
+//
+// Everything here is scoped to body.pagelayout-login, which covers log
+// in, sign up and lost password.
+//
+// Both halves are laid out against one centred 1200px grid - the same
+// max-width the footer, Dashboard and My Courses use - rather than
+// against the viewport edges: the panel's text starts on the grid's left
+// edge and the card ends on its right edge, so the login screen lines up
+// with every other page instead of spilling into the screen margins.
+$ospira-login-aside-width: 50%;
+$ospira-login-grid: 1200px;
+$ospira-login-gutter: clamp(1.5rem, 4vw, 3rem);
+
+// The brand mark from pix/brand/logo-horizontal.png, redrawn in CSS: that
+// PNG is a dark wordmark on an opaque light pill, so it shows as a grey
+// chip wherever it is placed. Three background layers on a single element
+// reproduce the real mark - the quadrant ring clipped to a transparent
+// border box, the white gap clipped to the padding box, and the split
+// purple/yellow disc clipped to the content box. The gap has to be a
+// gradient rather than a plain colour: in the `background` shorthand only
+// the final layer may carry a background-color.
+@mixin ospira-brand-mark($size) {
+    display: block;
+    width: $size;
+    height: $size;
+    border: $size * 0.125 solid transparent;
+    padding: $size * 0.075;
+    border-radius: 50%;
+    background:
+        linear-gradient(90deg, $ospira-purple 0 50%, $ospira-yellow 50% 100%) content-box,
+        linear-gradient(#fff, #fff) padding-box,
+        conic-gradient(
+            $ospira-yellow 0deg 90deg,
+            $ospira-pink 90deg 180deg,
+            $ospira-purple 180deg 270deg,
+            $ospira-blue 270deg 360deg
+        ) border-box;
+}
+
+body.pagelayout-login {
+
+    // The viewport height lives here, not on #page: #page-wrapper is a
+    // flex column, so #page (flex: 1 0 auto) grows into whatever the
+    // footer leaves. min-height: 100vh on #page instead made the page
+    // exactly one footer taller than the viewport and scroll for nothing.
+    //
+    // position: relative also makes this the containing block for the
+    // brand panel, which is absolutely positioned against it (see
+    // .ospira-login-aside) so that the two columns scroll as one page.
+    #page-wrapper {
+        position: relative;
+        min-height: 100vh;
+    }
+
+    #page {
+        // Boost paints #page with its own flat grey gradient
+        // ($loginbackground-gradient-from/to). Cleared, so the site-wide
+        // gradient shows through and this page shares its background with
+        // every other page.
+        background: transparent !important;
+        // Padding, not a margin: #page is a width: 100% .container-fluid
+        // inside a flex column, so a 50% margin either overflowed the
+        // viewport sideways or (with width: auto) collapsed #page to the
+        // card's own width.
+        padding-left: $ospira-login-aside-width;
+        padding-right: $ospira-login-gutter;
+    }
+
+    // Boost centers the card with align-items: center, which clips the top
+    // of it on short viewports (a flex item taller than its line overflows
+    // both ways and the top goes out of reach). `safe center` falls back
+    // to flex-start exactly in that case; the unprefixed value is kept
+    // first for browsers that don't understand the safe keyword.
+    .login-wrapper {
+        align-items: center;
+        align-items: safe center;
+        // Right edge of the card lands on the grid's right edge (#page's
+        // padding-right above), instead of the card floating in the
+        // middle of whatever space is left over.
+        justify-content: flex-end;
+    }
+
+    .login-container {
+        width: 100% !important; // Boost hard-codes 500px !important at md+
+        max-width: 460px;
+        border: 1px solid rgba(120, 63, 170, 0.08);
+        border-radius: 1.5rem;
+        margin-bottom: 0;
+        animation: ospira-login-rise 0.5s ease-out both;
+    }
+
+    // Moodle renders the site logo here with the "Log in to Ospira LMS"
+    // <h1> visually hidden beside it. The uploaded logo is dropped for the
+    // CSS mark - same artwork, no grey pill - and a greeting, so the card
+    // doesn't open straight onto two bare input boxes. Both are
+    // decoration; the hidden <h1> still carries the page's accessible
+    // title. If the site logo setting is ever cleared, Moodle shows that
+    // <h1> instead and the rule below styles it.
+    .login-logo {
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 0.75rem;
+
+        img {
+            display: none;
+        }
+
+        &::before {
+            content: "";
+            @include ospira-brand-mark(46px);
+        }
+
+        // Neutral wording on purpose: this card greets first-time
+        // visitors as often as returning ones, and "Welcome back" /
+        // "pick up where you left off" is wrong for everyone who has
+        // never logged in here.
+        &::after {
+            content: "Welcome to Ospira";
+            margin-top: 1rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: $ospira-ink;
+        }
+    }
+
+    .login-form::before {
+        content: "Log in to access your courses.";
+        display: block;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        font-size: 0.9375rem;
+        color: rgba(43, 36, 56, 0.65);
+    }
+
+    // Shown instead of the logo block when no site logo is configured.
+    h1.login-heading:not(.visually-hidden) {
+        text-align: center;
+        font-weight: 700;
+        color: $ospira-ink;
+        margin-bottom: 1.75rem;
+    }
+
+    h2.login-heading {
+        font-size: 1.0625rem;
+        font-weight: 700;
+        color: $ospira-ink;
+    }
+
+    .form-control {
+        // Moodle 5 renders these inputs without a width, so they fall back
+        // to the HTML `size` default (~20 characters) in a 460px card.
+        width: 100%;
+        height: 52px;
+        padding: 0 1.125rem;
+        font-size: 0.9375rem;
+        color: $ospira-ink;
+        background-color: #FAF8FD;
+        border: 1.5px solid rgba(120, 63, 170, 0.14);
+        border-radius: 0.875rem;
+
+        &::placeholder {
+            color: rgba(43, 36, 56, 0.45);
+        }
+
+        &:focus {
+            background-color: #fff;
+            border-color: $ospira-purple;
+            box-shadow: 0 0 0 4px rgba(120, 63, 170, 0.12);
+        }
+    }
+
+    // Moodle 5 wraps the password field and its "show password" eye button
+    // in a Bootstrap .input-group (.toggle-sensitive-wrapper), where the
+    // field is a flex item sized `width: 1%; flex: 1 1 auto`. The blanket
+    // width: 100% above overrode that and pushed the button onto its own
+    // line below the field.
+    // The wrapper is built by core's toggle_sensitive JS after the page
+    // loads, so it is width: 100% here explicitly rather than trusting
+    // whatever it inherits at the moment it appears.
+    .toggle-sensitive-wrapper {
+        width: 100%;
+    }
+
+    .input-group > .form-control {
+        width: 1%;
+        flex: 1 1 auto;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    // That button is a stock .btn-secondary (grey, and pill-shaped from
+    // $btn-border-radius) - restyled to read as the right-hand end of the
+    // field it sits against.
+    .toggle-sensitive-btn {
+        color: rgba(43, 36, 56, 0.55) !important;
+        background: #FAF8FD !important;
+        border: 1.5px solid rgba(120, 63, 170, 0.14) !important;
+        border-left: none !important;
+        border-radius: 0 0.875rem 0.875rem 0 !important;
+
+        &:hover,
+        &:focus {
+            color: $ospira-purple !important;
+            background: #F3EEFA !important;
+        }
+    }
+
+    .login-form-submit {
+        margin-top: 1.5rem;
+    }
+
+    #loginbtn,
+    #guestlogin .btn,
+    .login-signup .btn {
+        width: 100%;
+        padding: 0.85rem 1.5rem;
+        border-radius: 999px;
+        font-weight: 600;
+    }
+
+    // .btn-primary's sitewide rule sets a flat background-color !important,
+    // so the gradient has to match that weight to land.
+    #loginbtn {
+        font-size: 1rem;
+        background: linear-gradient(135deg, $ospira-purple 0%, $ospira-indigo 100%) !important;
+        border: none !important;
+        box-shadow: 0 12px 24px rgba(120, 63, 170, 0.28);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+        &:hover,
+        &:focus {
+            transform: translateY(-1px);
+            box-shadow: 0 16px 30px rgba(120, 63, 170, 0.34);
+        }
+    }
+
+    // "Create new account" / "Log in as a guest" are .btn-secondary, which
+    // is Bootstrap grey here ($secondary is the brand's neutral) - restyled
+    // as outline-purple so they read as secondary to Log in without
+    // disappearing into the card.
+    #guestlogin .btn,
+    .login-signup .btn {
+        color: $ospira-purple !important;
+        background: transparent !important;
+        border: 2px solid rgba(120, 63, 170, 0.35) !important;
+
+        &:hover,
+        &:focus {
+            background: rgba(120, 63, 170, 0.08) !important;
+        }
+    }
+
+    .login-form-forgotpassword {
+        text-align: center;
+
+        a {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+    }
+
+    .login-identityprovider-btn {
+        border-radius: 999px !important;
+        border-width: 2px !important;
+        font-weight: 600;
+        padding: 0.7rem 1.25rem;
+    }
+
+    .login-instructions,
+    .login-container p {
+        font-size: 0.9375rem;
+        color: rgba(43, 36, 56, 0.7);
+    }
+
+    .alert {
+        border: none;
+        border-radius: 0.875rem;
+        font-size: 0.9375rem;
+    }
+
+    // The footer element itself has to stay - it carries
+    // output.standard_end_of_body_html, i.e. Moodle's end-of-page JS (see
+    // templates/theme_boost/footer.mustache). Only its visible bands are
+    // dropped: a dark full-width footer would cut straight across the
+    // continuous background this page is built on.
+    .ospira-footer {
+        width: auto;
+        margin-left: 0;
+        margin-right: 0;
+        // Left padding matching #page's: the footer sits outside #page, so
+        // without it whatever standard_footer_html emits centers itself
+        // across the whole viewport, half of it under the brand panel.
+        padding: 0 0 0 $ospira-login-aside-width;
+        background: transparent;
+    }
+
+    .ospira-footer__top,
+    .ospira-footer__columns {
+        display: none;
+    }
+
+    // What's left of the footer is whatever standard_footer_html emits -
+    // on this instance the "Data retention summary" link. It keeps
+    // working; it just reads as a quiet line under the card now. The
+    // debugging band is excluded: when it does appear it is a developer
+    // tool, and it brings its own dark styling.
+    .ospira-footer > div:not(.footer-content-debugging) {
+        text-align: center;
+        padding: 0.75rem 1rem;
+        font-size: 0.8125rem;
+    }
+}
+
+// ---- The brand panel --------------------------------------------------
+// The left half, vertically centered, with no background of its own - the
+// page's gradient runs underneath it.
+//
+// Absolutely positioned against #page-wrapper rather than fixed to the
+// viewport: fixed pinned the panel in place while the card scrolled past
+// it, so on a short window the two halves moved independently. Stretched
+// top to bottom, it is as tall as the page and scrolls with it.
+.ospira-login-aside {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1; // below #ospira-theme-toggle (1050)
+    display: flex;
+    align-items: center;
+    width: $ospira-login-aside-width;
+    padding: 3rem $ospira-login-gutter;
+    overflow: hidden;
+
+    &__decor {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+    }
+
+    // Soft brand blobs, the same device as the front-page hero's
+    // .ospira-hero-blob - they tint the page's own background rather than
+    // covering it.
+    &__orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(6px);
+
+        &--one {
+            top: -60px;
+            left: -70px;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle at 40% 40%, rgba(120, 63, 170, 0.20), transparent 70%);
+            animation: ospira-login-float 14s ease-in-out infinite;
+        }
+
+        &--two {
+            right: 4%;
+            bottom: -70px;
+            width: 260px;
+            height: 260px;
+            background: radial-gradient(circle at 45% 45%, rgba(70, 206, 245, 0.28), transparent 70%);
+            animation: ospira-login-float 18s ease-in-out infinite reverse;
+        }
+    }
+
+    &__dots {
+        position: absolute;
+        right: 11%;
+        bottom: 16%;
+        width: 110px;
+        height: 110px;
+        background-image: radial-gradient(rgba(120, 63, 170, 0.28) 2px, transparent 2px);
+        background-size: 14px 14px;
+    }
+
+    // Half the grid, less a gap before the card column.
+    &__inner {
+        position: relative;
+        z-index: 1;
+        max-width: calc(#{$ospira-login-grid} / 2 - 2rem);
+        animation: ospira-login-rise 0.6s ease-out both;
+    }
+
+    &__brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.7rem;
+        margin-bottom: 2.25rem;
+        text-decoration: none;
+
+        &:hover,
+        &:focus {
+            text-decoration: none;
+        }
+    }
+
+    &__mark {
+        flex-shrink: 0;
+        @include ospira-brand-mark(40px);
+    }
+
+    &__wordmark {
+        color: $ospira-ink;
+        font-size: 1.75rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        line-height: 1;
+    }
+
+    // Matches the front page hero's type scale and its indigo accent, so
+    // the two landing surfaces read as the same design.
+    &__headline {
+        margin: 0 0 1rem;
+        font-size: clamp(1.9rem, 2.6vw, 2.5rem);
+        font-weight: 700;
+        line-height: 1.2;
+        color: $ospira-ink;
+    }
+
+    &__headline-accent {
+        display: block;
+        color: $ospira-indigo;
+    }
+
+    &__lead {
+        margin: 0 0 1.5rem;
+        max-width: 42ch;
+        font-size: 1.0625rem;
+        line-height: 1.6;
+        color: rgba(43, 36, 56, 0.72);
+    }
+
+    &__ages {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+        li {
+            padding: 0.35rem 0.9rem;
+            border-radius: 999px;
+            background: rgba(120, 63, 170, 0.1);
+            color: $ospira-purple;
+            font-size: 0.8125rem;
+            font-weight: 600;
+        }
+    }
+}
+
+// Once the viewport is wider than the grid, the gutter becomes whatever
+// centres that grid - this is what puts the panel's text and the card's
+// right edge on the same 1200px column as the rest of the site. Below
+// 1200px the clamp() gutter above already holds, so there is nothing to
+// override. (100vw includes the scrollbar, so both sides shift by the
+// same couple of pixels and stay symmetrical.)
+@media (min-width: 1200px) {
+    .ospira-login-aside {
+        padding-left: calc((100vw - #{$ospira-login-grid}) / 2);
+    }
+
+    body.pagelayout-login #page {
+        padding-right: calc((100vw - #{$ospira-login-grid}) / 2);
+    }
+}
+
+// ---- The study scene (CSS illustration) -------------------------------
+// A laptop and a stack of books, drawn in CSS around the one photograph
+// the theme ships (pix/dashboard/family.jpg). That photo is a cutout on a
+// white background, which is why it sits inside the laptop's white screen
+// - there it blends instead of showing as a white rectangle.
+//
+// Nothing here is captioned. Nobody is logged in on this page, so a
+// "module complete" or "certificate earned" chip would be invented.
+.ospira-login-scene {
+    position: relative;
+    width: 100%;
+    max-width: 310px;
+    // The book stack hangs off the laptop at a negative offset; the left
+    // inset keeps it inside the panel, which clips its overflow so
+    // nothing can push the page sideways.
+    margin: 2.5rem 0 0 5rem;
+    animation: ospira-login-bob 7s ease-in-out infinite;
+
+    &__laptop {
+        position: relative;
+
+        // Grounds the laptop with a soft contact shadow instead of
+        // leaving it floating on the background.
+        &::after {
+            content: "";
+            position: absolute;
+            left: 6%;
+            bottom: -16px;
+            width: 88%;
+            height: 16px;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at center, rgba(43, 36, 56, 0.22), transparent 70%);
+            filter: blur(3px);
+        }
+    }
+
+    &__screen {
+        padding: 9px;
+        border-radius: 14px;
+        background: linear-gradient(160deg, #3B2F4E, #241C31);
+        box-shadow: 0 22px 44px rgba(43, 36, 56, 0.28);
+    }
+
+    &__screen-inner {
+        display: flex;
+        flex-direction: column;
+        aspect-ratio: 16 / 10;
+        border-radius: 7px;
+        overflow: hidden;
+        background: #fff;
+    }
+
+    &__photo {
+        flex: 1 1 auto;
+        width: 100%;
+        min-height: 0;
+        object-fit: cover;
+        object-position: center 20%;
+        display: block;
+    }
+
+    // The "lesson" below the video: a title line and a progress bar that
+    // fills on a loop - the same blue/indigo bar as the real course
+    // progress bars elsewhere in the theme.
+    &__screen-body {
+        flex: 0 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+        padding: 0.55rem 0.8rem 0.75rem;
+    }
+
+    &__screen-title {
+        display: block;
+        width: 62%;
+        height: 7px;
+        border-radius: 999px;
+        background: rgba(43, 36, 56, 0.16);
+    }
+
+    &__screen-bar {
+        display: block;
+        height: 7px;
+        border-radius: 999px;
+        background: rgba(120, 63, 170, 0.14);
+        overflow: hidden;
+
+        span {
+            display: block;
+            width: 78%;
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, $ospira-blue, $ospira-indigo);
+            animation: ospira-login-progress 7s ease-in-out infinite;
+        }
+    }
+
+    &__base {
+        width: 118%;
+        height: 12px;
+        margin-left: -9%;
+        border-radius: 0 0 14px 14px;
+        background: linear-gradient(180deg, #332945, #241C31);
+        box-shadow: 0 12px 22px rgba(43, 36, 56, 0.2);
+    }
+
+    &__books {
+        position: absolute;
+        left: -52px;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    &__book {
+        display: block;
+        height: 12px;
+        border-radius: 3px;
+        box-shadow: 0 4px 10px rgba(43, 36, 56, 0.16);
+
+        &--one   { width: 62px; background: $ospira-blue; }
+        &--two   { width: 54px; margin-left: 5px; background: $ospira-yellow; }
+        &--three { width: 58px; background: $ospira-pink; }
+    }
+
+}
+
+@keyframes ospira-login-bob {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50%      { transform: translate3d(0, -10px, 0); }
+}
+
+@keyframes ospira-login-float {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50%      { transform: translate3d(0, -14px, 0); }
+}
+
+@keyframes ospira-login-progress {
+    0%, 8%    { width: 10%; }
+    60%, 100% { width: 78%; }
+}
+
+@keyframes ospira-login-rise {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ospira-login-aside__orb,
+    .ospira-login-aside__inner,
+    .ospira-login-scene,
+    .ospira-login-scene__screen-bar span,
+    body.pagelayout-login .login-container {
+        animation: none;
+    }
+}
+
+// Below lg the split becomes a stack: the panel is the first element in
+// #page-wrapper, so dropping it out of fixed positioning lands it above
+// the card as a compact banner. The scene goes with it - at this width it
+// pushes the login form itself below the fold.
+@media (max-width: 991.98px) {
+    .ospira-login-aside {
+        // relative, not static: the decorative orbs are positioned inside
+        // this panel, and with it static they would measure themselves
+        // against #page-wrapper instead and escape its overflow.
+        position: relative;
+        width: 100%;
+        // #page-wrapper is a flex column with min-height: 100vh, and #page
+        // is flex: 1 0 auto - it refuses to shrink. So the panel, the only
+        // shrinkable item in that column, absorbed the entire overflow:
+        // it was squeezed from its content height to a third of it, and
+        // overflow: hidden cut the headline and the lead in half.
+        flex: 0 0 auto;
+        padding: 2.25rem 1.5rem 0.5rem;
+
+        &__brand {
+            margin-bottom: 1.5rem;
+        }
+
+        &__dots {
+            display: none;
+        }
+    }
+
+    .ospira-login-scene {
+        display: none;
+    }
+
+    body.pagelayout-login {
+        #page {
+            // Back to .container-fluid's own gutter.
+            padding-left: calc(var(--bs-gutter-x, 1.5rem) * 0.5);
+            padding-right: calc(var(--bs-gutter-x, 1.5rem) * 0.5);
+            padding-top: 2rem !important; // trims Boost's own pt-5
+        }
+
+        // Stacked, there is no grid to align the card's right edge to.
+        // The side padding is the card's only margin at this width -
+        // Bootstrap's own row/column gutters cancel out along this chain.
+        .login-wrapper {
+            justify-content: center;
+            padding: 0 1rem 1rem;
+        }
+
+        .ospira-footer {
+            padding-left: 0;
+        }
+    }
+}
+
+@media (max-width: 575.98px) {
+    body.pagelayout-login .login-container {
+        padding: 1.75rem;
+    }
+}
+
+
 // ---- Dark mode -----------------------------------------------------
 // Toggled via class="ospira-dark" on <html> - see the toggle button and
 // script injected in classes/output/core_renderer.php.
@@ -1793,5 +2492,99 @@ html.ospira-dark .ospira-mycourses-progress__value {
 // background here is enough, no separate link rule needed.
 html.ospira-dark .login-container {
     background-color: #1E1E1E !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
     box-shadow: 0 2px 14px rgba(0, 0, 0, 0.4) !important;
 }
+
+// #page is transparent in both modes (the sitewide `html, body` rule
+// supplies the background), so the login screen follows the rest of the
+// site into dark mode with no backdrop rule of its own. What does need
+// overriding is the brand panel: unlike .ospira-dashboard-hero it has no
+// fixed coloured surface under it, so its ink-on-light text has to flip.
+html.ospira-dark .ospira-login-aside__wordmark,
+html.ospira-dark .ospira-login-aside__headline {
+    color: #EDEDED !important;
+}
+
+// $ospira-indigo is 3.4:1 on #121212 - enough for this display-sized
+// heading, but lightened anyway to sit clearly ahead of the body text.
+html.ospira-dark .ospira-login-aside__headline-accent {
+    color: #8AA9EE !important;
+}
+
+html.ospira-dark .ospira-login-aside__lead {
+    color: #b8b8b8 !important;
+}
+
+html.ospira-dark .ospira-login-aside__ages li {
+    background: rgba(183, 156, 224, 0.16) !important;
+    color: #B79CE0 !important;
+}
+
+html.ospira-dark .ospira-login-aside__dots {
+    background-image: radial-gradient(rgba(183, 156, 224, 0.3) 2px, transparent 2px) !important;
+}
+
+// The scene's laptop screen stays light in both modes - it is a prop in
+// an illustration, not a page surface, and the photo inside it is a
+// cutout on white either way.
+
+// .form-control and the card's greeting both set explicit
+// light-mode colours above, so neither is reached by the sitewide
+// dark-mode catch-alls.
+html.ospira-dark body.pagelayout-login .form-control,
+html.ospira-dark body.pagelayout-login .toggle-sensitive-btn {
+    color: #EDEDED !important;
+    background-color: #2A2A2A !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+
+    &::placeholder {
+        color: rgba(237, 237, 237, 0.5) !important;
+    }
+
+    &:focus {
+        background-color: #2A2A2A !important;
+        border-color: #B79CE0 !important;
+        box-shadow: 0 0 0 4px rgba(183, 156, 224, 0.18) !important;
+    }
+}
+
+html.ospira-dark body.pagelayout-login .login-logo::after,
+html.ospira-dark body.pagelayout-login h2.login-heading {
+    color: #EDEDED !important;
+}
+
+html.ospira-dark body.pagelayout-login .login-form::before {
+    color: #b8b8b8 !important;
+}
+
+// The sitewide dark rule paints #region-main #1E1E1E as Boost's content
+// wrapper. Here that wrapper is the whole right-hand column, so it drew a
+// hard edge down the middle of the page against the panel - the same
+// reason Boost itself sets background-color: inherit on it for this
+// layout.
+html.ospira-dark body.pagelayout-login #region-main {
+    background-color: transparent !important;
+}
+
+html.ospira-dark body.pagelayout-login .login-instructions,
+html.ospira-dark body.pagelayout-login .login-container p {
+    color: #b8b8b8 !important;
+}
+
+// Outline-purple on a dark card is the same contrast problem as
+// .btn-outline-primary sitewide (2.76:1) - lighten it the same way.
+html.ospira-dark body.pagelayout-login #guestlogin .btn,
+html.ospira-dark body.pagelayout-login .login-signup .btn {
+    color: #B79CE0 !important;
+    border-color: rgba(183, 156, 224, 0.5) !important;
+
+    &:hover,
+    &:focus {
+        background: rgba(183, 156, 224, 0.12) !important;
+    }
+}
+
+// .ospira-login-aside has no dark-mode override on purpose - like
+// .ospira-dashboard-hero, it is a fixed brand surface with its own
+// white-on-purple contrast in both modes.

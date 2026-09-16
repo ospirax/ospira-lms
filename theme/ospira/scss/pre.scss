@@ -30,6 +30,16 @@ $btn-border-radius:    50rem;
 $btn-border-radius-lg: 50rem;
 $btn-border-radius-sm: 50rem;
 
+// Login card. theme/boost/scss/moodle/login.scss declares these !default,
+// so setting them here changes how .login-container itself compiles -
+// no override rule needed. Its $loginbackground-gradient-from/to pair is
+// deliberately left alone: those feed Boost's gradient-x() mixin, which
+// only emits a two-stop linear gradient, and the login backdrop in
+// scss/ospira.scss is a layered radial mesh.
+$logincontainer-padding: 2.75rem;
+$logincontainer-shadow:  0 30px 70px rgba(43, 36, 56, 0.18);
+$logindivider-border:    rgba(120, 63, 170, 0.14);
+
 // Taller navbar (~85px, up from Boost's 60px default). Boost centers
 // navbar content via flex on a hard `height: $navbar-height + 1px`, not
 // padding, so this variable is what drives it - every other

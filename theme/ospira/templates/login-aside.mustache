@@ -1,0 +1,109 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+
+    @template theme_ospira/login-aside
+
+    Brand panel shown beside the login card on every pagelayout "login"
+    page (log in, sign up, lost password) - see
+    classes/output/core_renderer.php::standard_top_of_body_html().
+
+    Injected at the top of the body rather than by overriding
+    core/loginform, so none of Moodle's authentication markup (login
+    token, identity providers, guest access, error banners) is forked
+    into this theme. CSS puts it in the left column; see the
+    .ospira-login-aside rules in scss/ospira.scss.
+
+    The brand mark is drawn in CSS (@mixin ospira-brand-mark), not from
+    pix/brand/logo-horizontal.png - that file is a dark wordmark on an
+    opaque light pill, which reads as a grey chip on this gradient.
+
+    The study scene below it is a CSS illustration - a laptop and a stack
+    of books - wrapped around the one real photograph the theme ships. The photo is a
+    cutout on a white background, which is exactly why it sits inside the
+    laptop's white screen: it blends into it instead of showing as a white
+    rectangle. The scene is aria-hidden - it is decoration, and it
+    duplicates nothing the form needs.
+
+    It carries no captions or counts. Nobody is logged in on this page, so
+    a "module complete" or "certificate earned" chip would be invented -
+    wrong for the first-time visitors this screen greets most.
+
+    The headline is a <p>, not a heading: this panel precedes the login
+    form's own <h1>, and an <h2> ahead of it would put the page's
+    headings out of order for screen readers.
+
+    Context variables required for this template - see
+    theme_ospira_get_login_aside_context() in lib.php.
+
+    Example context (json):
+    {
+        "homeurl": "https://learning.ospirax.com/?redirect=0",
+        "photourl": "https://learning.ospirax.com/theme/image.php/ospira/theme_ospira/1/dashboard/family"
+    }
+}}
+<aside class="ospira-login-aside">
+    <div class="ospira-login-aside__decor" aria-hidden="true">
+        <span class="ospira-login-aside__orb ospira-login-aside__orb--one"></span>
+        <span class="ospira-login-aside__orb ospira-login-aside__orb--two"></span>
+        <span class="ospira-login-aside__dots"></span>
+    </div>
+
+    <div class="ospira-login-aside__inner">
+        <a class="ospira-login-aside__brand" href="{{homeurl}}">
+            <span class="ospira-login-aside__mark" aria-hidden="true"></span>
+            <span class="ospira-login-aside__wordmark">ospira</span>
+        </a>
+
+        <p class="ospira-login-aside__headline">
+            Learning that grows <span class="ospira-login-aside__headline-accent">with your child</span>
+        </p>
+        <p class="ospira-login-aside__lead">
+            Parent-first courses for every stage of raising a child - practical,
+            bite-sized, and built around your family.
+        </p>
+
+        <ul class="ospira-login-aside__ages">
+            <li>Ages 1-5</li>
+            <li>6-10</li>
+            <li>11-15</li>
+            <li>16-20</li>
+        </ul>
+
+        <div class="ospira-login-scene" aria-hidden="true">
+            <div class="ospira-login-scene__laptop">
+                <div class="ospira-login-scene__screen">
+                    <div class="ospira-login-scene__screen-inner">
+                        <img class="ospira-login-scene__photo" src="{{photourl}}" alt="">
+                        <div class="ospira-login-scene__screen-body">
+                            <span class="ospira-login-scene__screen-title"></span>
+                            <span class="ospira-login-scene__screen-bar"><span></span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="ospira-login-scene__base"></div>
+            </div>
+
+            <div class="ospira-login-scene__books">
+                <span class="ospira-login-scene__book ospira-login-scene__book--one"></span>
+                <span class="ospira-login-scene__book ospira-login-scene__book--two"></span>
+                <span class="ospira-login-scene__book ospira-login-scene__book--three"></span>
+            </div>
+
+        </div>
+    </div>
+</aside>
